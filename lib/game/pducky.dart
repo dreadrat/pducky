@@ -4,6 +4,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/painting.dart';
 import 'package:pducky/game/game.dart';
 import 'package:pducky/l10n/l10n.dart';
+import 'package:pducky/game/components/button_component.dart';
 
 class Pducky extends FlameGame with HasCollisionDetection {
   Pducky({
@@ -56,6 +57,35 @@ class Pducky extends FlameGame with HasCollisionDetection {
               Vector2(0, 116),
             ),
         ),
+        GameButton(
+          position: Vector2
+              .zero(), // This will be overridden in the GameButton's onLoad method
+          side: ButtonSide.Left,
+          image: ButtonImage.Puppy,
+          onTap: () {},
+        ),
+        GameButton(
+          position: Vector2
+              .zero(), // This will be overridden in the GameButton's onLoad method
+          side: ButtonSide.Left,
+          image: ButtonImage.Duck,
+          onTap: () {},
+        ),
+        GameButton(
+          position: Vector2
+              .zero(), // This will be overridden in the GameButton's onLoad method
+          side: ButtonSide.Right,
+          image: ButtonImage.Duck,
+          onTap: () {},
+        ),
+        GameButton(
+          position: Vector2
+              .zero(), // This will be overridden in the GameButton's onLoad method
+          side: ButtonSide.Right,
+          image: ButtonImage.Puppy,
+          onTap: () {},
+        ),
+
         // Add the left scoring zone
       ],
     );

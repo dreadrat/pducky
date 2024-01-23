@@ -20,6 +20,17 @@ class BouncingBehaviour extends Behavior with HasGameRef {
     startMoving();
   }
 
+  void speedUp() {
+    if (timeToBounce > 800) {
+      // Minimum timeToBounce is 1000
+      timeToBounce -= 200; // Decrease timeToBounce by 500
+    }
+  }
+
+  void slowDown() {
+    timeToBounce += 200; // Increase timeToBounce by 500
+  }
+
   void startMoving() {
     if (parent is! PositionComponent) {
       throw Exception(
