@@ -66,6 +66,7 @@ class ScoringZone extends PositionedEntity
     if (other is PuppyDuck) {
       isColliding = false;
       // Additional logic if needed
+      
     }
   }
 
@@ -76,8 +77,8 @@ class ScoringZone extends PositionedEntity
     // Create a paint with the desired color and opacity
     final paint = BasicPalette.blue.paint()
       ..color = isColliding
-          ? Colors.blue.withOpacity(0.0)
-          : Color.fromARGB(255, 229, 229, 229).withOpacity(0.1);
+          ? Colors.blue.withOpacity(0.1)
+          : Color.fromARGB(255, 229, 229, 229).withOpacity(0.0);
 
     // Draw a rectangle with the size and position of the ScoringZone
     canvas.drawRect(size.toRect(), paint);

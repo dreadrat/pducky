@@ -25,7 +25,6 @@ class PuppyDuck extends PositionedEntity with HasGameRef {
                 }
               },
             ),
-            CollidableBehavior(),
           ],
         );
 

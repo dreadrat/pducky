@@ -20,7 +20,7 @@ class CollidableBehavior extends Behavior
     print('in THE ZOOOONE!!!!!!!');
     if (other == gameRef.puppyDuck) {
       // If a collision is detected, set the opacity to 0.5
-      opacity = 0.5;
+      opacity = 0.0;
     }
   }
 
@@ -30,7 +30,7 @@ class CollidableBehavior extends Behavior
     // Check if the collision with PuppyDuck has ended
     if (other == gameRef.puppyDuck) {
       // Reset the opacity
-      opacity = 0.0;
+      opacity = 0.5;
     }
   }
 }
