@@ -45,8 +45,8 @@ class BouncingBehaviour extends Behavior with HasGameRef {
 
     onDirectionChange(direction); // Modify this line
 
-    controller = EffectController(
-        duration: timeToBounce / 1000.0, curve: Curves.easeInOut);
+    controller =
+        EffectController(duration: timeToBounce / 1000.0, curve: Curves.linear);
     parentComponent.add(
       MoveEffect.by(
         Vector2(distance, 0),

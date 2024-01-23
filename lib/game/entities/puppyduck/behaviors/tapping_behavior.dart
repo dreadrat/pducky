@@ -12,14 +12,5 @@ class TappingBehavior extends Behavior<PuppyDuck>
     return parent.containsLocalPoint(point);
   }
 
-  @override
-  void onTapDown(TapDownEvent event) {
-    if (parent.isAnimationPlaying()) {
-      return;
-    }
-    gameRef.counter++;
-    parent.playAnimation();
-
-    gameRef.effectPlayer.play(AssetSource(Assets.audio.effect));
-  }
+ 
 }

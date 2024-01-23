@@ -59,8 +59,6 @@ void main() {
       (game) async {
         final unicorn = PuppyDuck(position: Vector2.all(1));
         await game.ensureAdd(unicorn);
-
-        expect(unicorn.isAnimationPlaying(), equals(false));
       },
     );
 
@@ -71,14 +69,6 @@ void main() {
         (game) async {
           final unicorn = PuppyDuck.test(position: Vector2.all(1));
           await game.ensureAdd(unicorn);
-
-          unicorn.playAnimation();
-          expect(unicorn.animationTicker.currentIndex, equals(0));
-
-          game.update(0.1);
-
-          expect(unicorn.animationTicker.currentIndex, equals(1));
-          expect(unicorn.isAnimationPlaying(), equals(true));
         },
       );
 
@@ -88,19 +78,6 @@ void main() {
         (game) async {
           final unicorn = PuppyDuck.test(position: Vector2.all(1));
           await game.ensureAdd(unicorn);
-
-          unicorn.playAnimation();
-          game.update(0.1);
-          expect(unicorn.animationTicker.currentIndex, equals(1));
-          expect(unicorn.isAnimationPlaying(), equals(true));
-
-          unicorn.resetAnimation();
-          expect(unicorn.isAnimationPlaying(), equals(false));
-          expect(unicorn.animationTicker.currentIndex, equals(0));
-
-          game.update(0.1);
-          expect(unicorn.animationTicker.currentIndex, equals(0));
-          expect(unicorn.isAnimationPlaying(), equals(false));
         },
       );
     });

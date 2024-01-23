@@ -31,7 +31,7 @@ class ScoringZone extends PositionedEntity
   @override
   Future<void> onLoad() async {
     // Set the size of the ScoringZone
-    size.setValues(puppyDuckSize.y, gameSize.y * 2 / 3);
+    size.setValues(puppyDuckSize.y / 2, gameSize.y * 2 / 3);
 
     // Set the position of the ScoringZone based on the side
     if (side == 'left') {
@@ -66,7 +66,6 @@ class ScoringZone extends PositionedEntity
     if (other is PuppyDuck) {
       isColliding = false;
       // Additional logic if needed
-      
     }
   }
 
