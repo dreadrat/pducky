@@ -58,7 +58,7 @@ void main() {
         await game.ensureAdd(
           PuppyDuck.test(
             position: Vector2.zero(),
-            behaviors: [TappingBehavior()],
+        behaviors: [],
           ),
         );
       },

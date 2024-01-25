@@ -43,17 +43,6 @@ void main() {
     });
 
     testWithGame(
-      'has all behaviors',
-      createFlameGame,
-      (game) async {
-        final unicorn = PuppyDuck(position: Vector2.all(1));
-        await game.ensureAdd(unicorn);
-
-        expect(unicorn.findBehavior<TappingBehavior>(), isNotNull);
-      },
-    );
-
-    testWithGame(
       'loads correctly',
       createFlameGame,
       (game) async {

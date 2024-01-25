@@ -66,22 +66,7 @@ class PuppyDuck extends PositionedEntity with HasGameRef {
         size: size,
       ),
     );
-
-    resetAnimation();
   }
-
-  void resetAnimation() {
-    animationTicker
-      ..currentIndex = animationTicker.spriteAnimation.frames.length - 1
-      ..update(0.1)
-      ..currentIndex = 0;
-  }
-
-  /// Plays the animation.
-  void playAnimation() => animationTicker.reset();
-
-  /// Returns whether the animation is playing or not.
-  bool isAnimationPlaying() => !animationTicker.done();
 
   @override
   void update(double dt) {

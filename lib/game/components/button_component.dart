@@ -1,8 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flame/effects.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
-import 'package:flame/components.dart';
 import 'package:flutter/foundation.dart';
 
 enum ButtonSide { Left, Right }
@@ -13,8 +11,6 @@ class GameButton extends PositionedEntity with HasGameRef, TapCallbacks {
   final ButtonSide side;
   final ButtonImage image;
   final VoidCallback onTap;
-  double buttonScale = 1.0;
-  bool hold = false; // Add this line
 
   GameButton({
     required super.position,
@@ -56,32 +52,11 @@ class GameButton extends PositionedEntity with HasGameRef, TapCallbacks {
 
   @override
   void onTapDown(TapDownEvent event) {
-    if (hold) {
-      return;
-    }
-    hold = true;
-    add(
-      ScaleEffect.by(
-        Vector2.all(0.9), // Scale down to 90% of the original size
-        EffectController(duration: 0.3), // Duration of the effect
-        onComplete: () => hold = false,
-      ),
-    );
+    onTap();
   }
 
   @override
   void onTapUp(TapUpEvent event) {
-    if (hold) {
-      return;
-    }
-    hold = true;
-    add(
-      ScaleEffect.by(
-        Vector2.all(1 / 0.9), // Scale back to the original size
-        EffectController(duration: 0.3), // Duration of the effect
-        onComplete: () => hold = false,
-      ),
-    );
-    onTap();
+    // No action needed on tap up
   }
 }

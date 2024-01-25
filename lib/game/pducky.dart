@@ -57,34 +57,7 @@ class Pducky extends FlameGame with HasCollisionDetection {
               Vector2(0, 116),
             ),
         ),
-        GameButton(
-          position: Vector2
-              .zero(), // This will be overridden in the GameButton's onLoad method
-          side: ButtonSide.Left,
-          image: ButtonImage.Puppy,
-          onTap: () {},
-        ),
-        GameButton(
-          position: Vector2
-              .zero(), // This will be overridden in the GameButton's onLoad method
-          side: ButtonSide.Left,
-          image: ButtonImage.Duck,
-          onTap: () {},
-        ),
-        GameButton(
-          position: Vector2
-              .zero(), // This will be overridden in the GameButton's onLoad method
-          side: ButtonSide.Right,
-          image: ButtonImage.Duck,
-          onTap: () {},
-        ),
-        GameButton(
-          position: Vector2
-              .zero(), // This will be overridden in the GameButton's onLoad method
-          side: ButtonSide.Right,
-          image: ButtonImage.Puppy,
-          onTap: () {},
-        ),
+        GameplayButtons(),
 
         // Add the left scoring zone
       ],
