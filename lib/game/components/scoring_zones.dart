@@ -54,7 +54,7 @@ class ScoringZone extends PositionedEntity
   @override
   void onCollision(Set<Vector2> points, PositionComponent other) {
     super.onCollision(points, other);
-    if (other is PuppyDuck) {
+    if (other is Ball) {
       isColliding = true;
       // Additional logic if needed
     }
@@ -63,7 +63,7 @@ class ScoringZone extends PositionedEntity
   @override
   void onCollisionEnd(PositionComponent other) {
     super.onCollisionEnd(other);
-    if (other is PuppyDuck) {
+    if (other is Ball) {
       isColliding = false;
       // Additional logic if needed
     }
@@ -82,4 +82,20 @@ class ScoringZone extends PositionedEntity
     // Draw a rectangle with the size and position of the ScoringZone
     canvas.drawRect(size.toRect(), paint);
   }
+
+  @override
+void onGameResize(Vector2 gameSize) {
+  super.onGameResize(gameSize);
+
+  // Set the size of the ScoringZone
+  size.setValues(puppyDuckSize.y / 2, gameSize.y * 2 / 3);
+
+  // Set the position of the ScoringZone based on the side
+  if (side == 'left') {
+    position.setFrom(Vector2.zero()); // The top left corner of the game
+  } else if (side == 'right') {
+    position.setFrom(Vector2(gameSize.x - size.x, 0)); // The top right corner of the game
+  }
+}
+
 }

@@ -4,13 +4,17 @@ import 'package:flame/game.dart';
 import 'package:flutter/painting.dart';
 import 'package:pducky/game/game.dart';
 import 'package:pducky/l10n/l10n.dart';
-import 'package:pducky/game/components/button_component.dart';
+import 'package:pducky/game/components/components.dart';
+import 'package:pducky/game/cubit/gameplay/scoring_cubit.dart';
 
 class Pducky extends FlameGame with HasCollisionDetection {
+  final ScoringCubit? scoringCubit;
+
   Pducky({
     required this.l10n,
     required this.effectPlayer,
     required this.textStyle,
+    required this.scoringCubit,
   }) {
     images.prefix = '';
   }
@@ -22,7 +26,7 @@ class Pducky extends FlameGame with HasCollisionDetection {
   final TextStyle textStyle;
 
   late final DateTime startTime;
-  late final PuppyDuck puppyDuck;
+  late final Ball puppyDuck;
 
   int ballSpeed = 10;
   double accelleration = 5.0;
@@ -34,9 +38,9 @@ class Pducky extends FlameGame with HasCollisionDetection {
 
   @override
   Future<void> onLoad() async {
-    puppyDuck = PuppyDuck(position: size / 2);
     final world = World(
       children: [
+        puppyDuck = Ball(position: size / 2),
         ScoringZone(
           puppyDuckSize: Vector2(size.x * 0.2,
               size.y * 0.2), // Replace with the actual size of the PuppyDuck

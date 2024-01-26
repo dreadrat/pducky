@@ -2,7 +2,7 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flutter/widgets.dart';
-import 'dart:async';
+import 'package:flame_audio/flame_audio.dart';
 
 enum MovementDirection { Left, Right }
 
@@ -15,10 +15,12 @@ class BouncingBehaviour extends Behavior with HasGameRef {
   BouncingBehaviour({required this.onDirectionChange}); // No change here
 
   @override
-  void onMount() {
+  void onLoad() {
     super.onMount();
     startMoving();
-  }
+    }
+
+ 
 
   void speedUp() {
     if (timeToBounce > 800) {
@@ -54,7 +56,14 @@ class BouncingBehaviour extends Behavior with HasGameRef {
       direction = MovementDirection.Left; // Set the direction of movement
     }
 
-    onDirectionChange(direction); // Modify this line
+    onDirectionChange(direction);
+
+    // Play the sound based on the direction
+    if (direction == MovementDirection.Right) {
+      FlameAudio.play('blip_left.mp3');
+    } else {
+      FlameAudio.play('blip_right.mp3');
+    }
 
     controller =
         EffectController(duration: timeToBounce / 1000.0, curve: Curves.linear);

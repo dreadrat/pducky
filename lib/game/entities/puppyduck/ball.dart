@@ -3,70 +3,71 @@ import 'package:flame/sprite.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flutter/material.dart';
 import 'package:pducky/game/entities/puppyduck/behaviors/bouncing_behaviour.dart';
-import 'package:pducky/game/entities/puppyduck/behaviors/collision_behaviour.dart';
 import 'package:pducky/gen/assets.gen.dart';
 import 'package:flame_audio/flame_audio.dart';
-import 'package:flame/geometry.dart';
-import 'package:flame/collisions.dart'; // Import geometry for Collidable
+import 'package:flame/collisions.dart';
+import 'behaviors/behaviors.dart';
+import 'dart:math';
 
-class PuppyDuck extends PositionedEntity with HasGameRef {
-  PuppyDuck({
+class Ball extends PositionedEntity with HasGameRef {
+  late SpriteComponent _spriteComponent;
+  String currentImage = (Random().nextBool() ? 'puppy.png' : 'duck.png');
+
+  Ball({
     required super.position,
   }) : super(
           anchor: Anchor.center,
           size: Vector2.all(0),
-          behaviors: [
-            BouncingBehaviour(
-              onDirectionChange: (direction) {
-                if (direction == MovementDirection.Right) {
-                  FlameAudio.play('blip_left.mp3');
-                } else {
-                  FlameAudio.play('blip_right.mp3');
-                }
-              },
-            ),
-          ],
         );
 
-  @visibleForTesting
-  PuppyDuck.test({
-    required super.position,
-    super.behaviors,
-  }) : super(size: Vector2.all(500));
+  @override
+  void onGameResize(Vector2 gameSize) {
+    super.onGameResize(gameSize);
 
-  late SpriteAnimationComponent _animationComponent;
-
-  @visibleForTesting
-  SpriteAnimationTicker get animationTicker =>
-      _animationComponent.animationTicker!;
+    size.setValues(gameSize.y * 0.1, gameSize.y * 0.1);
+    position = Vector2(gameSize.x / 2, gameSize.y / 3);
+  }
 
   @override
   Future<void> onLoad() async {
-    // Set the size of the PuppyDuck to be 10% of the game height
-    size.setValues(gameRef.size.y * 0.2, gameRef.size.y * 0.2);
-    // Set the position of the PuppyDuck to be 1/3 from the top of the game
+    size.setValues(gameRef.size.y * 0.1, gameRef.size.y * 0.1);
     position = Vector2(gameRef.size.x / 2, gameRef.size.y / 3);
 
-    final animation = await gameRef.loadSpriteAnimation(
-      Assets.images.unicornAnimation.path,
-      SpriteAnimationData.sequenced(
-        amount: 16,
-        stepTime: 0.1,
-        textureSize: Vector2.all(32),
-        loop: false,
-      ),
+    final sprite = await gameRef.loadSprite('assets/images/$currentImage');
+
+    _spriteComponent = SpriteComponent(
+      sprite: sprite,
+      size: size,
     );
+
+    add(_spriteComponent);
 
     final hitbox = RectangleHitbox(size: size);
     add(hitbox);
 
-    await add(
-      _animationComponent = SpriteAnimationComponent(
-        animation: animation,
-        size: size,
-      ),
-    );
+    add(BouncingBehaviour(
+      onDirectionChange: (direction) async {
+        String newImage = (Random().nextBool() ? 'puppy.png' : 'duck.png');
+        ;
+        final sprite = await gameRef.loadSprite('assets/images/$newImage');
+        _spriteComponent.sprite = sprite;
+      },
+    ));
   }
+
+  Future<void> playAudioBasedOnDirection(MovementDirection direction) async {
+    if (direction == MovementDirection.Right) {
+      await FlameAudio.play('blip_left.mp3');
+    } else {
+      await FlameAudio.play('blip_right.mp3');
+    }
+  }
+
+  @visibleForTesting
+  Ball.test({
+    required super.position,
+    super.behaviors,
+  }) : super(size: Vector2.all(500));
 
   @override
   void update(double dt) {
