@@ -8,13 +8,12 @@ import 'package:pducky/game/components/components.dart';
 import 'package:pducky/game/cubit/gameplay/scoring_cubit.dart';
 
 class Pducky extends FlameGame with HasCollisionDetection {
-  final ScoringCubit? scoringCubit;
+  
 
   Pducky({
     required this.l10n,
     required this.effectPlayer,
-    required this.textStyle,
-    required this.scoringCubit,
+    required this.textStyle
   }) {
     images.prefix = '';
   }
