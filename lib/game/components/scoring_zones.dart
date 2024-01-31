@@ -3,16 +3,21 @@ import 'package:flame/components.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
-import 'package:pducky/game/entities/puppyduck/behaviors/collision_behaviour.dart';
+import 'package:pducky/game/entities/ball/behaviors/collision_behaviour.dart';
 import 'package:pducky/game/game.dart';
 import 'package:pducky/game/pducky.dart';
+import 'package:pducky/game/cubit/cubit.dart';
 
 class ScoringZone extends PositionedEntity
     with HasGameRef<Pducky>, CollisionCallbacks {
+        final ScoringCubit scoringCubit;
+         // Add a new field for the ScoringCubit
+
   ScoringZone({
     required this.puppyDuckSize,
     required this.gameSize,
     required this.side,
+    required this.scoringCubit,
   }) : super(
           position: Vector2.zero(),
           size: Vector2.zero(),
@@ -56,6 +61,7 @@ class ScoringZone extends PositionedEntity
     super.onCollision(points, other);
     if (other is Ball) {
       isColliding = true;
+      scoringCubit.updateBallInScoringZone(true);
       // Additional logic if needed
     }
   }
@@ -65,6 +71,7 @@ class ScoringZone extends PositionedEntity
     super.onCollisionEnd(other);
     if (other is Ball) {
       isColliding = false;
+      scoringCubit.updateBallInScoringZone(false);
       // Additional logic if needed
     }
   }

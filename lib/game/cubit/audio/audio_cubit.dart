@@ -16,7 +16,7 @@ class AudioCubit extends Cubit<AudioState> {
   AudioCubit.test({
     required this.effectPlayer,
     required this.bgm,
-    double volume = 1.0,
+    double volume = 0.0,
   }) : super(AudioState(volume: volume));
 
   final AudioPlayer effectPlayer;
@@ -33,7 +33,7 @@ class AudioCubit extends Cubit<AudioState> {
 
   Future<void> toggleVolume() async {
     if (state.volume == 0) {
-      return _changeVolume(1);
+      return _changeVolume(0);
     }
     return _changeVolume(0);
   }

@@ -3,34 +3,43 @@ import 'package:flame/effects.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flame_audio/flame_audio.dart';
+import 'package:pducky/game/game.dart';
+import 'package:pducky/game/cubit/cubit.dart';
 
 enum MovementDirection { Left, Right }
 
-class BouncingBehaviour extends Behavior with HasGameRef {
+
+
+class BouncingBehaviour extends Behavior with HasGameRef<Pducky> {
   int timeToBounce = 2000;
   late EffectController controller;
   MovementDirection direction = MovementDirection.Right;
-  final ValueChanged<MovementDirection> onDirectionChange; // Modify this line
+  final ValueChanged<MovementDirection> onDirectionChange;
+  int directionChanges = 0;
+  
+  final ScoringCubit scoringCubit; // Add this
 
-  BouncingBehaviour({required this.onDirectionChange}); // No change here
+  BouncingBehaviour({required this.onDirectionChange, required this.scoringCubit});
 
   @override
   void onLoad() {
     super.onMount();
     startMoving();
-    }
+  }
 
- 
+  void onResize() {
+    super.onMount();
+    startMoving();
+  }
 
   void speedUp() {
     if (timeToBounce > 800) {
-      // Minimum timeToBounce is 1000
-      timeToBounce -= 200; // Decrease timeToBounce by 500
+      timeToBounce -= 200;
     }
   }
 
   void slowDown() {
-    timeToBounce += 200; // Increase timeToBounce by 500
+    timeToBounce += 200;
   }
 
   void startMoving() {
@@ -41,22 +50,17 @@ class BouncingBehaviour extends Behavior with HasGameRef {
 
     PositionComponent parentComponent = parent as PositionComponent;
     double distance;
+    timeToBounce = gameRef.ballSpeed * 130;
 
-    // If the object is on the left half of the screen, move it to the right edge
-    if (parentComponent.position.x <= gameRef.size.x / 2) {
-      parentComponent.position.x = 0; // Start at the left edge of the screen
-      distance = gameRef.size.x; // Move to the right edge of the screen
-      direction = MovementDirection.Right; // Set the direction of movement
-    }
-    // If the object is on the right half of the screen, move it to the left edge
-    else {
-      parentComponent.position.x =
-          gameRef.size.x; // Start at the right edge of the screen
-      distance = -gameRef.size.x; // Move to the left edge of the screen
-      direction = MovementDirection.Left; // Set the direction of movement
+    // Reverse direction when a collision is detected
+    if (direction == MovementDirection.Right) {
+      distance = gameRef.size.x - parentComponent.position.x;
+    } else {
+      distance = -parentComponent.position.x;
     }
 
     onDirectionChange(direction);
+
 
     // Play the sound based on the direction
     if (direction == MovementDirection.Right) {
@@ -66,7 +70,7 @@ class BouncingBehaviour extends Behavior with HasGameRef {
     }
 
     controller =
-        EffectController(duration: timeToBounce / 1000.0, curve: Curves.linear);
+        EffectController(duration: timeToBounce / 1000.0, curve: Curves.easeOutQuad);
     parentComponent.add(
       MoveEffect.by(
         Vector2(distance, 0),
@@ -79,7 +83,12 @@ class BouncingBehaviour extends Behavior with HasGameRef {
   void update(double dt) {
     super.update(dt);
     if (controller.completed) {
+      // Reverse direction when a collision is detected
+      direction = direction == MovementDirection.Right
+          ? MovementDirection.Left
+          : MovementDirection.Right;
       startMoving();
     }
   }
 }
+

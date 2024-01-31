@@ -2,10 +2,14 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/painting.dart';
+import 'package:pducky/game/components/speed_contoller_component.dart';
 import 'package:pducky/game/game.dart';
 import 'package:pducky/l10n/l10n.dart';
 import 'package:pducky/game/components/components.dart';
 import 'package:pducky/game/cubit/gameplay/scoring_cubit.dart';
+import 'entities/entities.dart';
+import 'package:pducky/game/entities/ball/behaviors/behaviors.dart';
+
 
 class Pducky extends FlameGame with HasCollisionDetection {
   
@@ -16,6 +20,7 @@ class Pducky extends FlameGame with HasCollisionDetection {
     required this.textStyle
   }) {
     images.prefix = '';
+     debugMode = true;
   }
 
   final AppLocalizations l10n;
@@ -26,8 +31,10 @@ class Pducky extends FlameGame with HasCollisionDetection {
 
   late final DateTime startTime;
   late final Ball puppyDuck;
+  
 
-  int ballSpeed = 10;
+
+  int ballSpeed = 50;
   double accelleration = 5.0;
 
   int counter = 0;
@@ -37,14 +44,20 @@ class Pducky extends FlameGame with HasCollisionDetection {
 
   @override
   Future<void> onLoad() async {
+    Vector2 gameSize = size;
+    ScoringCubit scoringCubit = ScoringCubit();
+
+
     final world = World(
       children: [
-        puppyDuck = Ball(position: size / 2),
+        puppyDuck = Ball(position: size / 2, scoringCubit: scoringCubit),
         ScoringZone(
           puppyDuckSize: Vector2(size.x * 0.2,
               size.y * 0.2), // Replace with the actual size of the PuppyDuck
           gameSize: size,
           side: 'left',
+          scoringCubit: scoringCubit,
+          
         ),
         // Add the right scoring zone
         ScoringZone(
@@ -52,6 +65,7 @@ class Pducky extends FlameGame with HasCollisionDetection {
               size.y * 0.2), // Replace with the actual size of the PuppyDuck
           gameSize: size,
           side: 'right',
+          scoringCubit: scoringCubit,
         ),
         puppyDuck,
         StopwatchComponent(
@@ -60,7 +74,10 @@ class Pducky extends FlameGame with HasCollisionDetection {
               Vector2(0, 116),
             ),
         ),
-        GameplayButtons(),
+        GameplayButtons(scoringCubit: scoringCubit),
+        Wall.left(gameSize: gameSize),
+        Wall.right(gameSize: gameSize),
+        ScoreBoardComponent(scoringCubit),
 
         // Add the left scoring zone
       ],

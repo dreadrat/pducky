@@ -3,6 +3,9 @@ import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flutter/foundation.dart';
+import 'package:pducky/game/entities/ball/behaviors/scoring_behaviour.dart';
+import 'package:pducky/game/cubit/cubit.dart';
+import 'package:pducky/game/entities/entities.dart';
 
 enum ButtonSide { Left, Right }
 
@@ -12,16 +15,19 @@ class GameButton extends PositionedEntity with HasGameRef, TapCallbacks {
   final ButtonSide side;
   final ButtonImage image;
   final VoidCallback onTap;
+  final ScoringCubit scoringCubit;
 
   GameButton({
     required super.position,
     required this.side,
     required this.image,
     required this.onTap,
+    required this.scoringCubit,
   }) : super(
           anchor: Anchor.center,
           size: Vector2.all(0),
-          behaviors: [],
+          behaviors: [
+                    ],
         );
 
   late SpriteComponent _spriteComponent;
@@ -55,6 +61,15 @@ class GameButton extends PositionedEntity with HasGameRef, TapCallbacks {
   @override
   void onTapDown(TapDownEvent event) {
     onTap();
+    BallImage ballImage = image == ButtonImage.Puppy ? BallImage.Puppy : BallImage.Duck;
+    scoringCubit.checkForScore(ballImage);
+
+   // Print the button image
+  print('Button image: $image()');
+  
+  // Print the scoring cubit's current image
+  print('Scoring cubit image: ${scoringCubit.state.ballImage}');
+
     add(SequenceEffect([
       ScaleEffect.by(
         Vector2.all(1.5),
@@ -64,6 +79,7 @@ class GameButton extends PositionedEntity with HasGameRef, TapCallbacks {
         ),
       ),
     ]));
+
   }
 
   @override
