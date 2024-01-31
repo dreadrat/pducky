@@ -10,11 +10,13 @@ class StopwatchComponent extends PositionComponent with HasGameRef<Pducky> {
 
   @override
   Future<void> onLoad() async {
+        position.setValues(gameRef.size.x / 2, 0); // Position at top center
+
     await add(
       text = TextComponent(
         anchor: Anchor.center,
         textRenderer: TextPaint(
-          style: game.textStyle,
+          style: gameRef.textStyle.copyWith(fontSize: 20)
         ),
       ),
     );

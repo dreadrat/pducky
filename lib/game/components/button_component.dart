@@ -3,6 +3,8 @@ import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pducky/game/cubit/cubit.dart';
 import 'package:pducky/game/entities/entities.dart';
 
@@ -10,7 +12,7 @@ enum ButtonSide { Left, Right }
 
 enum ButtonImage { Puppy, Duck, Minus, Plus }
 
-class GameButton extends PositionedEntity with HasGameRef, TapCallbacks {
+class GameButton extends PositionedEntity with HasGameRef, TapCallbacks, KeyboardHandler {
   final ButtonSide side;
   final ButtonImage image;
   final VoidCallback onTap;
@@ -70,18 +72,13 @@ class GameButton extends PositionedEntity with HasGameRef, TapCallbacks {
       image == ButtonImage.Puppy ? gameRef.size.y * 0.9 : gameRef.size.y * 0.75,
     );
   }
-
-  @override
-  void onTapDown(TapDownEvent event) {
+  void handleButtonPress() {
     onTap();
     BallImage ballImage = image == ButtonImage.Puppy ? BallImage.Puppy : BallImage.Duck;
     scoringCubit.checkForScore(ballImage);
 
-   // Print the button image
-  print('Button image: $image()');
-  
-  // Print the scoring cubit's current image
-  print('Scoring cubit image: ${scoringCubit.state.ballImage}');
+    print('Button image: $image');
+    print('Scoring cubit image: ${scoringCubit.state.ballImage}');
 
     add(SequenceEffect([
       ScaleEffect.by(
@@ -92,11 +89,43 @@ class GameButton extends PositionedEntity with HasGameRef, TapCallbacks {
         ),
       ),
     ]));
+  }
+  
+  
 
+  @override
+  void onTapDown(TapDownEvent event) {
+    handleButtonPress();
   }
 
   @override
-  void onTapUp(TapUpEvent event) {
-    // No action needed on tap up
+  bool onKeyEvent(
+    RawKeyEvent event,
+    Set<LogicalKeyboardKey> keysPressed,
+  ) {
+    final isKeyDown = event is RawKeyDownEvent;
+
+    final isAKey = keysPressed.contains(LogicalKeyboardKey.keyA);
+    final isZKey = keysPressed.contains(LogicalKeyboardKey.keyZ);
+    final isMKey = keysPressed.contains(LogicalKeyboardKey.keyM);
+    final isKKey = keysPressed.contains(LogicalKeyboardKey.keyK);
+
+    if (isKeyDown) {
+      if (isZKey && side == ButtonSide.Left && image == ButtonImage.Puppy) {
+        handleButtonPress();
+        return false;
+      } else if (isAKey && side == ButtonSide.Left && image != ButtonImage.Puppy) {
+        handleButtonPress();
+        return false;
+      } else if (isMKey && side == ButtonSide.Right && image == ButtonImage.Puppy) {
+        handleButtonPress();
+        return false;
+      } else if (isKKey && side == ButtonSide.Right && image != ButtonImage.Puppy) {
+        handleButtonPress();
+        return false;
+      }
+    }
+
+    return true;
   }
 }

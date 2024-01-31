@@ -9,9 +9,10 @@ import 'package:pducky/game/components/components.dart';
 import 'package:pducky/game/cubit/gameplay/scoring_cubit.dart';
 import 'entities/entities.dart';
 import 'package:pducky/game/entities/ball/behaviors/behaviors.dart';
+import 'package:flame/input.dart';
 
 
-class Pducky extends FlameGame with HasCollisionDetection {
+class Pducky extends FlameGame with HasCollisionDetection, HasKeyboardHandlerComponents {
   
 
   Pducky({
