@@ -75,8 +75,6 @@ class Pducky extends FlameGame with HasCollisionDetection {
             ),
         ),
         GameplayButtons(scoringCubit: scoringCubit),
-        Wall.left(gameSize: gameSize),
-        Wall.right(gameSize: gameSize),
         ScoreBoardComponent(scoringCubit),
 
         // Add the left scoring zone
@@ -90,4 +88,8 @@ class Pducky extends FlameGame with HasCollisionDetection {
     camera.viewfinder.position = size / 2;
     camera.viewfinder.zoom = 1;
   }
+
+
+
+
 }

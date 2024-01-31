@@ -50,7 +50,7 @@ class BouncingBehaviour extends Behavior with HasGameRef<Pducky> {
 
     PositionComponent parentComponent = parent as PositionComponent;
     double distance;
-    timeToBounce = gameRef.ballSpeed * 130;
+    timeToBounce = gameRef.ballSpeed * 100;
 
     // Reverse direction when a collision is detected
     if (direction == MovementDirection.Right) {
@@ -69,14 +69,23 @@ class BouncingBehaviour extends Behavior with HasGameRef<Pducky> {
       FlameAudio.play('blip_right.mp3');
     }
 
-    controller =
-        EffectController(duration: timeToBounce / 1000.0, curve: Curves.easeOutQuad);
-    parentComponent.add(
-      MoveEffect.by(
-        Vector2(distance, 0),
-        controller,
-      ),
-    );
+// Set the initial size of the ball to 1% of the game's height
+parentComponent.size = Vector2.all(gameRef.size.y * 0.01);
+
+// Calculate the target size as 10% of the game's height
+Vector2 targetSize = Vector2.all(gameRef.size.y * 0.1);
+
+controller = 
+    EffectController(duration: timeToBounce / 1000.0, curve: Curves.easeOutQuad);
+
+parentComponent.add(
+  MoveEffect.by(
+    Vector2(distance, 0),
+    controller,
+  ),
+);
+
+
   }
 
   @override
