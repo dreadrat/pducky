@@ -1,3 +1,4 @@
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
@@ -25,6 +26,7 @@ class BouncingBehaviour extends Behavior with HasGameRef<Pducky> {
   void onLoad() {
     super.onMount();
     startMoving();
+    RectangleHitbox();
   }
 
   void onResize() {
@@ -50,7 +52,7 @@ class BouncingBehaviour extends Behavior with HasGameRef<Pducky> {
 
     PositionComponent parentComponent = parent as PositionComponent;
     double distance;
-    timeToBounce = gameRef.ballSpeed * 100;
+    timeToBounce = gameRef.ballSpeed * 40;
 
     // Reverse direction when a collision is detected
     if (direction == MovementDirection.Right) {
@@ -69,14 +71,8 @@ class BouncingBehaviour extends Behavior with HasGameRef<Pducky> {
       FlameAudio.play('blip_right.mp3');
     }
 
-// Set the initial size of the ball to 1% of the game's height
-parentComponent.size = Vector2.all(gameRef.size.y * 0.01);
-
-// Calculate the target size as 10% of the game's height
-Vector2 targetSize = Vector2.all(gameRef.size.y * 0.1);
-
 controller = 
-    EffectController(duration: timeToBounce / 1000.0, curve: Curves.easeOutQuad);
+    EffectController(duration: timeToBounce / 1000.0, curve: Curves.easeOut);
 
 parentComponent.add(
   MoveEffect.by(

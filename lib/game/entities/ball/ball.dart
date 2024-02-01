@@ -27,24 +27,25 @@ class Ball extends PositionedEntity with HasGameRef {
   void onGameResize(Vector2 gameSize) {
     super.onGameResize(gameSize);
     size.setValues(gameSize.y * 0.1, gameSize.y * 0.1);
-    position = Vector2(gameSize.x / 2, gameSize.y / 3);
+    position = Vector2(0, gameSize.y / 3);
   }
 
   @override
   Future<void> onLoad() async {
     size.setValues(gameRef.size.y * 0.1, gameRef.size.y * 0.1);
-    position = Vector2(gameRef.size.x / 2, gameRef.size.y / 3);
+    position = Vector2(0, gameRef.size.y / 3);
 
     final sprite = await gameRef.loadSprite('assets/images/$currentImage');
 
     _spriteComponent = SpriteComponent(
       sprite: sprite,
       size: size,
+      anchor: Anchor.centerLeft,
     );
 
     add(_spriteComponent);
 
-    final hitbox = RectangleHitbox(size: size);
+    final hitbox = RectangleHitbox(size: size, anchor: Anchor.topLeft);
     add(hitbox);
 
     add(BouncingBehaviour(
