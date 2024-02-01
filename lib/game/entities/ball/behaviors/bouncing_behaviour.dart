@@ -24,14 +24,15 @@ class BouncingBehaviour extends Behavior with HasGameRef<Pducky> {
 
   @override
   void onLoad() {
-    super.onMount();
+    super.onLoad();
     startMoving();
     RectangleHitbox();
   }
 
-  void onResize() {
-    super.onMount();
+  void onResize(Vector2 gameSize) {
+    super.onGameResize(gameSize);
     startMoving();
+    RectangleHitbox();
   }
 
   void speedUp() {
@@ -79,7 +80,23 @@ parentComponent.add(
     Vector2(distance, 0),
     controller,
   ),
+ 
 );
+
+// Add a SequenceEffect to scale up the component and then scale it back down
+  parentComponent.add(
+    SequenceEffect([
+      ScaleEffect.by(
+        Vector2.all(1.5), // Replace 1.5 with the desired growth factor
+        controller,
+      ),
+      ScaleEffect.to(
+        Vector2.all(0.8), // Scale back down to the original size
+        EffectController(duration: 0.0),
+      ),
+    ]),
+  );
+
 
 
   }

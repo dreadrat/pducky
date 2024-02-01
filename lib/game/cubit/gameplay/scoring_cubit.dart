@@ -18,6 +18,7 @@ class ScoringCubit extends Cubit<ScoringState> {
     streak: 0,
     wrongTaps: 0,
     direction: MovementDirection.Left,
+    speed: 1000,
   );
 
 
@@ -50,10 +51,15 @@ class ScoringCubit extends Cubit<ScoringState> {
   }
 
   void increaseStreak() {
-    emit(state.copyWith(
-      streak: state.streak + 1
-    ));
-    
+     int newStreak = state.streak + 1;
+    double newSpeed = state.speed;
+
+    // If the new streak score is a multiple of 10, increase the speed
+    if (newStreak % 10 == 0) {
+      newSpeed += 0.1; // Replace 0.1 with the desired speed increase
+    }
+
+    emit(state.copyWith(streak: newStreak, speed: newSpeed));
   }
 
    void increaseWrongTaps() {
@@ -84,8 +90,10 @@ class ScoringState {
   final bool ballIsInScoringZone;
   final int score;
   final int streak;
-    final int wrongTaps; 
-    final MovementDirection direction;
+  final int wrongTaps; 
+  final MovementDirection direction;
+  final double speed;
+
 
   const ScoringState({
     required this.ballImage,
@@ -94,6 +102,7 @@ class ScoringState {
     required this.streak,
      required this.wrongTaps, 
      required this.direction,
+     required this.speed,
   });
 
   ScoringState copyWith({
@@ -103,6 +112,7 @@ class ScoringState {
     int? streak,
     int? wrongTaps,
     MovementDirection? direction, 
+    double? speed,
      }) {
 
      return ScoringState(
@@ -111,7 +121,8 @@ class ScoringState {
     score: score ?? this.score,
     streak: streak ?? this.streak,
     wrongTaps: wrongTaps ?? this.wrongTaps,
-    direction: direction ?? this.direction, // And this
+    direction: direction ?? this.direction,
+    speed: speed ?? this.speed, // And this
 
   );
   
