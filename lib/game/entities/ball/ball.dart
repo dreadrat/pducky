@@ -14,6 +14,8 @@ class Ball extends PositionedEntity with HasGameRef {
   late SpriteComponent _spriteComponent;
   String currentImage = (Random().nextBool() ? 'puppy.png' : 'duck.png');
   final ScoringCubit scoringCubit;
+  late CircleComponent circle;
+
 
   Ball({
     required super.position,

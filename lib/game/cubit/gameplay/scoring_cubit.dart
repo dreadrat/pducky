@@ -18,7 +18,7 @@ class ScoringCubit extends Cubit<ScoringState> {
     streak: 0,
     wrongTaps: 0,
     direction: MovementDirection.Left,
-    speed: 1000,
+    speed: 2500,
   );
 
 
@@ -42,10 +42,10 @@ class ScoringCubit extends Cubit<ScoringState> {
 
     switch (direction) {
       case MovementDirection.Left:
-        FlameAudio.play('score_left.mp3');
+        FlameAudio.play('left_score.mp3');
         break;
       case MovementDirection.Right:
-        FlameAudio.play('score_right.mp3');
+        FlameAudio.play('right_score.mp3');
         break;
     }
   }

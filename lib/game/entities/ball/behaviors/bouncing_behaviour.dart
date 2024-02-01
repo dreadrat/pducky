@@ -12,13 +12,13 @@ enum MovementDirection { Left, Right }
 
 
 class BouncingBehaviour extends Behavior with HasGameRef<Pducky> {
-  int timeToBounce = 2000;
+  double timeToBounce = 2000;
   late EffectController controller;
   MovementDirection direction = MovementDirection.Right;
   final ValueChanged<MovementDirection> onDirectionChange;
   int directionChanges = 0;
   
-  final ScoringCubit scoringCubit; // Add this
+  late ScoringCubit scoringCubit; // Add this
 
   BouncingBehaviour({required this.onDirectionChange, required this.scoringCubit});
 
@@ -53,7 +53,7 @@ class BouncingBehaviour extends Behavior with HasGameRef<Pducky> {
 
     PositionComponent parentComponent = parent as PositionComponent;
     double distance;
-    timeToBounce = gameRef.ballSpeed * 40;
+    timeToBounce = scoringCubit.state.speed;
 
     // Reverse direction when a collision is detected
     if (direction == MovementDirection.Right) {
