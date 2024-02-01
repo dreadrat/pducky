@@ -1,6 +1,7 @@
 import 'package:flame/game.dart' hide Route;
 import 'package:flame_audio/bgm.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pducky/game/game.dart';
 import 'package:pducky/gen/assets.gen.dart';
@@ -48,6 +49,11 @@ class _GameViewState extends State<GameView> {
     super.initState();
     bgm = context.read<AudioCubit>().bgm;
     //bgm.play(Assets.audio.background);
+    // Set preferred orientations to landscape
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
   }
 
   @override

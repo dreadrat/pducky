@@ -41,7 +41,13 @@ class GameButton extends PositionedEntity with HasGameRef, TapCallbacks, Keyboar
     await addButtonImage();
   }
 
-  
+    @override
+  Future<void> onGameResize(gameSize) async {
+    super.onGameResize(gameSize);
+    buttonLayouts();
+    await addButtonImage();
+  }
+
  
 
   Future<void> addButtonImage() async {

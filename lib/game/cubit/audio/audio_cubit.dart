@@ -3,20 +3,22 @@ import 'package:equatable/equatable.dart';
 import 'package:flame_audio/bgm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:pducky/gen/assets.gen.dart';
 part 'audio_state.dart';
 
 class AudioCubit extends Cubit<AudioState> {
   AudioCubit({required AudioCache audioCache})
       : effectPlayer = AudioPlayer()..audioCache = audioCache,
         bgm = Bgm(audioCache: audioCache),
-        super(const AudioState());
+        super(const AudioState()){bgm.play(Assets.audio.background); }
+
+        
 
   @visibleForTesting
   AudioCubit.test({
     required this.effectPlayer,
     required this.bgm,
-    double volume = 0.0,
+    double volume = 0.8,
   }) : super(AudioState(volume: volume));
 
   final AudioPlayer effectPlayer;
@@ -33,7 +35,7 @@ class AudioCubit extends Cubit<AudioState> {
 
   Future<void> toggleVolume() async {
     if (state.volume == 0) {
-      return _changeVolume(0);
+      return _changeVolume(0.8);
     }
     return _changeVolume(0);
   }
