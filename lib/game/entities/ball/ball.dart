@@ -51,7 +51,7 @@ class Ball extends PositionedEntity with HasGameRef {
 
     circle = CircleComponent(
     radius: 0.0, // Start with a radius of 0
-    paint: Paint()..color = Colors.yellow, // Make the circle bright yellow
+    paint: Paint()..color = Color.fromARGB(255, 170, 248, 1), // Make the circle bright yellow
   );
 
   add(circle);

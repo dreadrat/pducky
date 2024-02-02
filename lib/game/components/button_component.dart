@@ -135,3 +135,41 @@ class GameButton extends PositionedEntity with HasGameRef, TapCallbacks, Keyboar
     return true;
   }
 }
+
+
+class PausePlayButton extends PositionedEntity with HasGameRef, TapCallbacks {
+  final VoidCallback onPressed;
+  final Sprite playSprite;
+  final Sprite pauseSprite;
+  late SpriteComponent _spriteComponent;
+
+  PausePlayButton({
+    required this.onPressed,
+    required this.playSprite,
+    required this.pauseSprite,
+    required Vector2 position,
+    required Vector2 size,
+  }) : super(
+          position: position,
+          size: size,
+          anchor: Anchor.center,
+        );
+
+  void setPaused(bool isPaused) {
+    _spriteComponent.sprite = isPaused ? playSprite : pauseSprite;
+  }
+
+  @override
+  Future<void> onLoad() async {
+    _spriteComponent = SpriteComponent(
+      sprite: playSprite,
+      size: size,
+    );
+    await add(_spriteComponent);
+  }
+
+  @override
+  void onTapDown(TapDownEvent event) {
+    onPressed();
+  }
+}

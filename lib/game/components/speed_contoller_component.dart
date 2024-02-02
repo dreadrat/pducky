@@ -1,6 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:pducky/game/entities/ball/behaviors/bouncing_behaviour.dart';
 import 'package:pducky/game/components/button_component.dart';
+import 'package:flame/game.dart';
 
 class SpeedController extends PositionComponent with HasGameRef {
   final BouncingBehaviour bouncingBehaviour;
@@ -9,12 +10,13 @@ class SpeedController extends PositionComponent with HasGameRef {
     required this.bouncingBehaviour,
   });
 
-  @override
-  Future<void> onLoad() async {
-    // Set the size and position of the SpeedController
-    size.setValues(gameRef.size.x * 0.2, gameRef.size.y * 0.1);
-    position = Vector2(gameRef.size.x / 2 - size.x / 2, gameRef.size.y * 0.9);
 
-    
+  @override
+  void onGameResize(Vector2 size) {
+    super.onGameResize(size);
+    // Set the size and position of the SpeedController
+    this.size.setValues(size.x * 0.2, size.y * 0.1);
+    position = Vector2(size.x / 2 - this.size.x / 2, size.y * 0.9);
   }
+  
 }

@@ -7,10 +7,12 @@ class StopwatchComponent extends PositionComponent with HasGameRef<Pducky> {
   }) : super(anchor: Anchor.center);
 
   late final TextComponent text;
+  late final PausePlayButton pauseButton;
+  bool isPaused = false;
 
   @override
   Future<void> onLoad() async {
-        position.setValues(gameRef.size.x / 2, 100); // Position at top center
+    position.setValues(gameRef.size.x / 2, 50); // Position at top center
 
     await add(
       text = TextComponent(
@@ -20,10 +22,33 @@ class StopwatchComponent extends PositionComponent with HasGameRef<Pducky> {
         ),
       ),
     );
+
+    final playSprite = await gameRef.loadSprite('assets/images/play.png');
+    final pauseSprite = await gameRef.loadSprite('assets/images/pause.png');
+
+    pauseButton = PausePlayButton(
+      onPressed: () {
+       if (gameRef.paused) {
+      gameRef.resumeEngine();
+    } else {
+      gameRef.pauseEngine();
+    }
+    pauseButton.setPaused(gameRef.paused);
+      },
+      playSprite: playSprite,
+      pauseSprite: pauseSprite,
+      position: Vector2(0, 50), 
+      size: Vector2(20,20),
+    );
+    await add(pauseButton);
   }
 
-  @override
+    @override
   void update(double dt) {
+    if (gameRef.paused) {
+      return;
+    }
+
     // Calculate the elapsed time in seconds
     final elapsedTime = DateTime.now().difference(gameRef.startTime);
 

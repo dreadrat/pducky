@@ -1,15 +1,13 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
-import 'package:flutter/painting.dart';
-import 'package:pducky/game/components/speed_contoller_component.dart';
-import 'package:pducky/game/game.dart';
-import 'package:pducky/l10n/l10n.dart';
-import 'package:pducky/game/components/components.dart';
-import 'package:pducky/game/cubit/gameplay/scoring_cubit.dart';
-import 'entities/entities.dart';
-import 'package:pducky/game/entities/ball/behaviors/behaviors.dart';
 import 'package:flame/input.dart';
+import 'package:flutter/painting.dart';
+import 'package:pducky/game/game.dart';
+import 'package:pducky/game/entities/ball/behaviors/behaviors.dart';
+import 'package:pducky/l10n/l10n.dart';
+
+import 'entities/entities.dart';
 
 
 class Pducky extends FlameGame with HasCollisionDetection, HasKeyboardHandlerComponents {
@@ -21,7 +19,7 @@ class Pducky extends FlameGame with HasCollisionDetection, HasKeyboardHandlerCom
     required this.textStyle
   }) {
     images.prefix = '';
-     debugMode = true;
+     //debugMode = true;
   }
 
   final AppLocalizations l10n;
@@ -77,6 +75,7 @@ class Pducky extends FlameGame with HasCollisionDetection, HasKeyboardHandlerCom
         ),
         GameplayButtons(scoringCubit: scoringCubit),
         ScoreBoardComponent(scoringCubit),
+       
 
         // Add the left scoring zone
       ],
