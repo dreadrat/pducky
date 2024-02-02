@@ -8,7 +8,6 @@ class StopwatchComponent extends PositionComponent with HasGameRef<Pducky> {
 
   late final TextComponent text;
   late final PausePlayButton pauseButton;
-  bool isPaused = false;
 
   @override
   Future<void> onLoad() async {
@@ -28,22 +27,22 @@ class StopwatchComponent extends PositionComponent with HasGameRef<Pducky> {
 
     pauseButton = PausePlayButton(
       onPressed: () {
-       if (gameRef.paused) {
-      gameRef.resumeEngine();
-    } else {
-      gameRef.pauseEngine();
-    }
-    pauseButton.setPaused(gameRef.paused);
+        if (gameRef.paused) {
+          gameRef.resumeEngine();
+        } else {
+          gameRef.pauseEngine();
+        }
+        pauseButton.setPaused(gameRef.paused);
       },
       playSprite: playSprite,
       pauseSprite: pauseSprite,
       position: Vector2(0, 50), 
-      size: Vector2(20,20),
+      size: Vector2(35,35),
     );
     await add(pauseButton);
   }
 
-    @override
+  @override
   void update(double dt) {
     if (gameRef.paused) {
       return;

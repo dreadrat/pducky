@@ -12,14 +12,14 @@ enum MovementDirection { Left, Right }
 
 
 class BouncingBehaviour extends Behavior with HasGameRef<Pducky> {
-  double timeToBounce = 2000;
+  
   late EffectController controller;
   MovementDirection direction = MovementDirection.Right;
   final ValueChanged<MovementDirection> onDirectionChange;
   int directionChanges = 0;
   
   late ScoringCubit scoringCubit; // Add this
-
+  double timeToBounce = 0;
   BouncingBehaviour({required this.onDirectionChange, required this.scoringCubit});
 
   @override
