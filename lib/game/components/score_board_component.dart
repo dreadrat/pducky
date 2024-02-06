@@ -11,25 +11,27 @@ class ScoreBoardComponent extends PositionComponent with HasGameRef<Pducky> {
             anchor: Anchor
                 .topCenter); // Add scoringCubit as a constructor parameter
 
-@override
-Future<void> onLoad() async {
-  await add(
-    text = TextComponent(
-      anchor: Anchor.topCenter,
-      textRenderer: TextPaint(
-        style: gameRef.textStyle.copyWith(fontSize: 12), // Set the font size to 12
+  @override
+  Future<void> onLoad() async {
+    await add(
+      text = TextComponent(
+        anchor: Anchor.topCenter,
+        textRenderer: TextPaint(
+          style: gameRef.textStyle
+              .copyWith(fontSize: 12), // Set the font size to 12
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   void update(double dt) {
     super.update(dt);
-   
+
     text.text = 'Score: ${scoringCubit.state.score}, '
-                'Streak: ${scoringCubit.state.streak}, '
-                'Can score? ${scoringCubit.state.ballIsInScoringZone}, '
-                'ballImage: ${scoringCubit.state.ballImage} ';
-    position = gameRef.size / 2; // Update the position to the center of the screen
+        'Streak: ${scoringCubit.state.streak}, '
+        'Speed: ${scoringCubit.state.speed}'; // Update the text to display the score, streak, and speed
+
+    position =
+        gameRef.size / 2; // Update the position to the center of the screen
   }
 }

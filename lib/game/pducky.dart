@@ -30,9 +30,6 @@ class Pducky extends FlameGame
   late final Ball puppyDuck;
   late GameplayButtons gameplayButtons;
 
-  int ballSpeed = 50;
-  double accelleration = 5.0;
-
   int counter = 0;
 
   @override
@@ -47,16 +44,12 @@ class Pducky extends FlameGame
       children: [
         puppyDuck = Ball(position: size / 2, scoringCubit: scoringCubit),
         ScoringZone(
-          puppyDuckSize: Vector2(size.x * 0.2,
-              size.y * 0.2), // Replace with the actual size of the PuppyDuck
           gameSize: size,
           side: 'left',
           scoringCubit: scoringCubit,
         ),
         // Add the right scoring zone
         ScoringZone(
-          puppyDuckSize: Vector2(size.x * 0.2,
-              size.y * 0.2), // Replace with the actual size of the PuppyDuck
           gameSize: size,
           side: 'right',
           scoringCubit: scoringCubit,

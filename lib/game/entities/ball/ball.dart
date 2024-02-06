@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
@@ -17,20 +19,26 @@ class Ball extends PositionedEntity with HasGameRef {
   final ScoringCubit scoringCubit;
   late CircleComponent circle;
 
-
   Ball({
     required super.position,
-      required this.scoringCubit,
+    required this.scoringCubit,
   }) : super(
           anchor: Anchor.center,
           size: Vector2.all(0),
-        );
+        ) {
+    // Listen to the scoreIncreasedStream
+    scoringCubit.scoreIncreasedStream.listen((_) {
+      triggerCircleEffect();
+      print('scoring_cubit heard in the ball');
+    });
+  }
 
   @override
   void onGameResize(Vector2 gameSize) {
     super.onGameResize(gameSize);
     size.setValues(gameSize.y * 0.1, gameSize.y * 0.1);
     position = Vector2(0, gameSize.y / 3);
+    RectangleHitbox(size: size, anchor: Anchor.center);
   }
 
   @override
@@ -39,7 +47,6 @@ class Ball extends PositionedEntity with HasGameRef {
     position = Vector2(0, gameRef.size.y / 3);
 
     final sprite = await gameRef.loadSprite('assets/images/$currentImage');
-
 
     _spriteComponent = SpriteComponent(
       sprite: sprite,
@@ -50,26 +57,28 @@ class Ball extends PositionedEntity with HasGameRef {
     add(_spriteComponent);
 
     circle = CircleComponent(
-    radius: 0.0, // Start with a radius of 0
-    paint: Paint()..color = Color.fromARGB(255, 170, 248, 1), // Make the circle bright yellow
-  );
+      radius: 0.0, // Start with a radius of 0
+      paint: Paint()
+        ..color =
+            Color.fromARGB(255, 170, 248, 1), // Make the circle bright yellow
+    );
 
-  add(circle);
+    add(circle);
 
     final hitbox = RectangleHitbox(size: size, anchor: Anchor.topLeft);
     add(hitbox);
 
     add(BouncingBehaviour(
       onDirectionChange: (direction) async {
-       BallImage newImage = Random().nextBool() ? BallImage.Puppy : BallImage.Duck;
+        BallImage newImage =
+            Random().nextBool() ? BallImage.Puppy : BallImage.Duck;
         ;
-         final sprite = await gameRef.loadSprite('assets/images/${newImage == BallImage.Puppy ? 'puppy.png' : 'duck.png'}');
+        final sprite = await gameRef.loadSprite(
+            'assets/images/${newImage == BallImage.Puppy ? 'puppy.png' : 'duck.png'}');
         _spriteComponent.sprite = sprite;
         scoringCubit.updateBallImage(newImage);
       },
       scoringCubit: scoringCubit,
-
-      
     ));
   }
 
@@ -82,21 +91,25 @@ class Ball extends PositionedEntity with HasGameRef {
   }
 
   void triggerCircleEffect() {
-  circle.add(
-    SequenceEffect([
-      // Expand the circle to 2x the size of the sprite
-      ScaleEffect.to(
-        Vector2.all(2.0), // Replace 2.0 with the desired scale factor
-        EffectController(duration: 0.5, curve: Curves.easeOut), // Replace 0.5 with the desired duration
-      ),
-      // Fade out the circle
-      OpacityEffect.to(
-        0.0, // Fade out to 0 opacity
-        EffectController(duration: 0.5, curve: Curves.easeIn), // Replace 0.5 with the desired duration
-      ),
-    ]),
-  );
-}
+    circle.add(
+      SequenceEffect([
+        // Expand the circle to 2x the size of the sprite
+        ScaleEffect.to(
+          Vector2.all(2.0), // Replace 2.0 with the desired scale factor
+          EffectController(
+              duration: 0.5,
+              curve: Curves.easeOut), // Replace 0.5 with the desired duration
+        ),
+        // Fade out the circle
+        OpacityEffect.to(
+          0.0, // Fade out to 0 opacity
+          EffectController(
+              duration: 0.5,
+              curve: Curves.easeIn), // Replace 0.5 with the desired duration
+        ),
+      ]),
+    );
+  }
 
   @override
   void update(double dt) {

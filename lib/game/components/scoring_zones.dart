@@ -10,11 +10,10 @@ import 'package:pducky/game/cubit/cubit.dart';
 
 class ScoringZone extends PositionedEntity
     with HasGameRef<Pducky>, CollisionCallbacks {
-        final ScoringCubit scoringCubit;
-         // Add a new field for the ScoringCubit
+  final ScoringCubit scoringCubit;
+  // Add a new field for the ScoringCubit
 
   ScoringZone({
-    required this.puppyDuckSize,
     required this.gameSize,
     required this.side,
     required this.scoringCubit,
@@ -22,12 +21,8 @@ class ScoringZone extends PositionedEntity
           position: Vector2.zero(),
           size: Vector2.zero(),
           anchor: Anchor.topLeft,
-          behaviors: [
-            CollidableBehavior(),
-          ],
         );
 
-  final Vector2 puppyDuckSize;
   final Vector2 gameSize;
   final String side;
   bool isColliding =
@@ -36,7 +31,7 @@ class ScoringZone extends PositionedEntity
   @override
   Future<void> onLoad() async {
     // Set the size of the ScoringZone
-    size.setValues(puppyDuckSize.y / 2, gameSize.y * 2 / 3);
+    size.setValues(gameSize.y * .1, gameSize.y * 2 / 3);
 
     // Set the position of the ScoringZone based on the side
     if (side == 'left') {
@@ -57,8 +52,8 @@ class ScoringZone extends PositionedEntity
   }
 
   @override
-  void onCollision(Set<Vector2> points, PositionComponent other) {
-    super.onCollision(points, other);
+  void onCollisionStart(Set<Vector2> points, PositionComponent other) {
+    super.onCollisionStart(points, other);
     if (other is Ball) {
       isColliding = true;
       scoringCubit.updateBallInScoringZone(true);
@@ -82,27 +77,30 @@ class ScoringZone extends PositionedEntity
 
     // Create a paint with the desired color and opacity
     final paint = BasicPalette.blue.paint()
-      ..color = isColliding
-          ? Colors.blue.withOpacity(0.1)
-          : Color.fromARGB(255, 229, 229, 229).withOpacity(0.0);
+      ..color = scoringCubit.scoringZoneColorNotifier.value == Colors.green
+          ? Colors.green.withOpacity(
+              0.1) // Change the color to green when the user scores
+          : isColliding
+              ? const Color.fromARGB(255, 167, 187, 204).withOpacity(0.1)
+              : Color.fromARGB(255, 69, 81, 146).withOpacity(1);
 
     // Draw a rectangle with the size and position of the ScoringZone
     canvas.drawRect(size.toRect(), paint);
   }
 
   @override
-void onGameResize(Vector2 gameSize) {
-  super.onGameResize(gameSize);
+  void onGameResize(Vector2 gameSize) {
+    super.onGameResize(gameSize);
 
-  // Set the size of the ScoringZone
-  size.setValues(puppyDuckSize.y / 2, gameSize.y * 2 / 3);
+    // Set the size of the ScoringZone
+    size.setValues(gameSize.y * .1, gameSize.y * 2 / 3);
 
-  // Set the position of the ScoringZone based on the side
-  if (side == 'left') {
-    position.setFrom(Vector2.zero()); // The top left corner of the game
-  } else if (side == 'right') {
-    position.setFrom(Vector2(gameSize.x - size.x, 0)); // The top right corner of the game
+    // Set the position of the ScoringZone based on the side
+    if (side == 'left') {
+      position.setFrom(Vector2.zero()); // The top left corner of the game
+    } else if (side == 'right') {
+      position.setFrom(
+          Vector2(gameSize.x - size.x, 0)); // The top right corner of the game
+    }
   }
-}
-
 }

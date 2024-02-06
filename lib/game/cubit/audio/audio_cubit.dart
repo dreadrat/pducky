@@ -10,9 +10,7 @@ class AudioCubit extends Cubit<AudioState> {
   AudioCubit({required AudioCache audioCache})
       : effectPlayer = AudioPlayer()..audioCache = audioCache,
         bgm = Bgm(audioCache: audioCache),
-        super(const AudioState()){bgm.play(Assets.audio.background); }
-
-        
+        super(const AudioState()) {/*bgm.play(Assets.audio.background);*/}
 
   @visibleForTesting
   AudioCubit.test({
