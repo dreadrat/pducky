@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:pducky/game/components/button_component.dart';
+import 'package:pducky/game/components/pause_component.dart';
 import 'package:pducky/game/cubit/gameplay/scoring_cubit.dart';
 
 class GameplayButtons extends Component with HasGameRef {
@@ -41,6 +42,10 @@ final ScoringCubit scoringCubit; // Add this
         
           onTap: () {},
       ),
+      PauseButton(position: Vector2.all(0),
+       side: ButtonSide.Center, 
+       image: ButtonImage.Pause,
+       scoringCubit: scoringCubit)
     ]);
   }
 }

@@ -6,13 +6,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pducky/game/cubit/cubit.dart';
-import 'package:pducky/game/entities/entities.dart';
 
-enum ButtonSide { Left, Right }
+enum ButtonSide { Left, Right, Center }
 
-enum ButtonImage { Puppy, Duck, Minus, Plus }
+enum ButtonImage { Puppy, Duck, Minus, Plus, Pause, Play }
 
-class GameButton extends PositionedEntity with HasGameRef, TapCallbacks, KeyboardHandler {
+class GameButton extends PositionedEntity
+    with HasGameRef, TapCallbacks, KeyboardHandler {
   final ButtonSide side;
   final ButtonImage image;
   final VoidCallback onTap;
@@ -27,13 +27,10 @@ class GameButton extends PositionedEntity with HasGameRef, TapCallbacks, Keyboar
   }) : super(
           anchor: Anchor.center,
           size: Vector2.all(0),
-          behaviors: [
-                    ],
+          behaviors: [],
         );
 
   late SpriteComponent _spriteComponent;
-
- 
 
   @override
   Future<void> onLoad() async {
@@ -41,20 +38,26 @@ class GameButton extends PositionedEntity with HasGameRef, TapCallbacks, Keyboar
     await addButtonImage();
   }
 
-    @override
-  Future<void> onGameResize(gameSize) async {
+  @override
+  void onGameResize(Vector2 gameSize) {
     super.onGameResize(gameSize);
+    size.setValues(gameRef.size.y * 0.1, gameRef.size.y * 0.1);
     buttonLayouts();
-    await addButtonImage();
   }
 
- 
-
   Future<void> addButtonImage() async {
-     final sprite = await gameRef.loadSprite(
-      'assets/images/${image == ButtonImage.Puppy ? 'puppy.png' : image == ButtonImage.Duck ? 'duck.png' : image == ButtonImage.Minus ? 'minus.png' : 'plus.png'}',
+    final sprite = await gameRef.loadSprite(
+      'assets/images/' +
+          {
+            ButtonImage.Puppy: 'puppy.png',
+            ButtonImage.Duck: 'duck.png',
+            ButtonImage.Minus: 'minus.png',
+            ButtonImage.Plus: 'plus.png',
+            ButtonImage.Pause: 'pause.png',
+            ButtonImage.Play: 'play.png',
+          }[image]!,
     );
-    
+
     // Initialize and add the sprite component
     _spriteComponent = SpriteComponent(
       sprite: sprite,
@@ -63,8 +66,6 @@ class GameButton extends PositionedEntity with HasGameRef, TapCallbacks, Keyboar
     await add(_spriteComponent);
   }
 
-  
-
   void buttonLayouts() {
     size.setValues(gameRef.size.y * 0.1, gameRef.size.y * 0.1);
     position = Vector2(
@@ -72,15 +73,23 @@ class GameButton extends PositionedEntity with HasGameRef, TapCallbacks, Keyboar
           ? (image == ButtonImage.Puppy
               ? gameRef.size.x * 0.1
               : gameRef.size.x * 0.2)
-          : (image == ButtonImage.Puppy
-              ? gameRef.size.x * 0.9
-              : gameRef.size.x * 0.8),
-      image == ButtonImage.Puppy ? gameRef.size.y * 0.9 : gameRef.size.y * 0.75,
+          : side == ButtonSide.Center
+              ? gameRef.size.x * 0.5
+              : (image == ButtonImage.Puppy
+                  ? gameRef.size.x * 0.9
+                  : gameRef.size.x * 0.8),
+      side == ButtonSide.Center
+          ? gameRef.size.y * 0.9
+          : image == ButtonImage.Puppy
+              ? gameRef.size.y * 0.9
+              : gameRef.size.y * 0.75,
     );
   }
+
   void handleButtonPress() {
     onTap();
-    BallImage ballImage = image == ButtonImage.Puppy ? BallImage.Puppy : BallImage.Duck;
+    BallImage ballImage =
+        image == ButtonImage.Puppy ? BallImage.Puppy : BallImage.Duck;
     scoringCubit.checkForScore(ballImage);
 
     print('Button image: $image');
@@ -96,8 +105,6 @@ class GameButton extends PositionedEntity with HasGameRef, TapCallbacks, Keyboar
       ),
     ]));
   }
-  
-  
 
   @override
   void onTapDown(TapDownEvent event) {
@@ -120,56 +127,24 @@ class GameButton extends PositionedEntity with HasGameRef, TapCallbacks, Keyboar
       if (isZKey && side == ButtonSide.Left && image == ButtonImage.Puppy) {
         handleButtonPress();
         return false;
-      } else if (isAKey && side == ButtonSide.Left && image != ButtonImage.Puppy) {
+      } else if (isAKey &&
+          side == ButtonSide.Left &&
+          image != ButtonImage.Puppy) {
         handleButtonPress();
         return false;
-      } else if (isMKey && side == ButtonSide.Right && image == ButtonImage.Puppy) {
+      } else if (isMKey &&
+          side == ButtonSide.Right &&
+          image == ButtonImage.Puppy) {
         handleButtonPress();
         return false;
-      } else if (isKKey && side == ButtonSide.Right && image != ButtonImage.Puppy) {
+      } else if (isKKey &&
+          side == ButtonSide.Right &&
+          image != ButtonImage.Puppy) {
         handleButtonPress();
         return false;
       }
     }
 
     return true;
-  }
-}
-
-
-class PausePlayButton extends PositionedEntity with HasGameRef, TapCallbacks {
-  final VoidCallback onPressed;
-  final Sprite playSprite;
-  final Sprite pauseSprite;
-  late SpriteComponent _spriteComponent;
-
-  PausePlayButton({
-    required this.onPressed,
-    required this.playSprite,
-    required this.pauseSprite,
-    required Vector2 position,
-    required Vector2 size,
-  }) : super(
-          position: position,
-          size: size,
-          anchor: Anchor.center,
-        );
-
-  void setPaused(bool isPaused) {
-    _spriteComponent.sprite = isPaused ? playSprite : pauseSprite;
-  }
-
-  @override
-  Future<void> onLoad() async {
-    _spriteComponent = SpriteComponent(
-      sprite: playSprite,
-      size: size,
-    );
-    await add(_spriteComponent);
-  }
-
-  @override
-  void onTapDown(TapDownEvent event) {
-    onPressed();
   }
 }

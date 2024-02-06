@@ -7,6 +7,9 @@ import 'package:pducky/game/game.dart';
 import 'package:pducky/gen/assets.gen.dart';
 import 'package:pducky/l10n/l10n.dart';
 import 'package:pducky/loading/cubit/cubit.dart';
+import 'package:flutter/foundation.dart';
+
+import 'dart:io' show Platform;
 
 class GamePage extends StatelessWidget {
   const GamePage({super.key});
@@ -49,11 +52,18 @@ class _GameViewState extends State<GameView> {
     super.initState();
     bgm = context.read<AudioCubit>().bgm;
     //bgm.play(Assets.audio.background);
-    // Set preferred orientations to landscape
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
+    // Check if the app is running on the web
+  if (kIsWeb) {
+    // Code specific to web
+  } else {
+    // Code specific to Android and iOS
+    if (Platform.isAndroid || Platform.isIOS) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
+    }
+  }
   }
 
   @override
