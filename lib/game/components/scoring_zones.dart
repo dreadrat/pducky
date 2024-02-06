@@ -79,7 +79,7 @@ class ScoringZone extends PositionedEntity
     final paint = BasicPalette.blue.paint()
       ..color = scoringCubit.scoringZoneColorNotifier.value == Colors.green
           ? Colors.green.withOpacity(
-              0.1) // Change the color to green when the user scores
+              0.5) // Change the color to green when the user scores
           : isColliding
               ? const Color.fromARGB(255, 167, 187, 204).withOpacity(0.1)
               : Color.fromARGB(255, 69, 81, 146).withOpacity(1);

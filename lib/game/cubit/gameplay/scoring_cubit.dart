@@ -47,8 +47,9 @@ class ScoringCubit extends Cubit<ScoringState> {
     emit(state.copyWith(
         score: state.score + 1,
         missStreak: 0,
-        hasTapped:
-            true)); // Reset the missed taps count when a score is recorded
+        hasTapped: true,
+        direction:
+            direction)); // Reset the missed taps count when a score is recorded
 
     switch (direction) {
       case MovementDirection.Left:
