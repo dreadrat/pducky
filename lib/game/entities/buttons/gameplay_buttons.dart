@@ -3,7 +3,7 @@ import 'package:pducky/game/components/button_component.dart';
 import 'package:pducky/game/components/pause_component.dart';
 import 'package:pducky/game/cubit/gameplay/scoring_cubit.dart';
 
-class GameplayButtons extends Component with HasGameRef {
+class GameplayButtons extends PositionComponent with HasGameRef {
   final ScoringCubit scoringCubit; // Add this
 
   GameplayButtons({required this.scoringCubit}); // Add this

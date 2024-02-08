@@ -17,7 +17,7 @@ class Pducky extends FlameGame
       required this.effectPlayer,
       required this.textStyle}) {
     images.prefix = '';
-    debugMode = true;
+    debugMode = false;
   }
 
   final AppLocalizations l10n;

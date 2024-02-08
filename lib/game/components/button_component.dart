@@ -17,18 +17,20 @@ class GameButton extends PositionedEntity
   ButtonImage image;
   final VoidCallback onTap;
   final ScoringCubit scoringCubit;
+  final positionType = PositionType.game;
 
   late SpriteComponent _spriteComponent;
   SpriteComponent get spriteComponent =>
       _spriteComponent; // Provide a getter for _spriteComponent
 
-  GameButton({
-    required super.position,
-    required this.side,
-    required this.image,
-    required this.onTap,
-    required this.scoringCubit,
-  }) : super(
+  GameButton(
+      {required super.position,
+      required this.side,
+      required this.image,
+      required this.onTap,
+      required this.scoringCubit,
+      positionType = PositionType.viewport})
+      : super(
           anchor: Anchor.center,
           size: Vector2.all(0),
           behaviors: [],

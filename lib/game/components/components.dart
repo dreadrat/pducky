@@ -3,4 +3,3 @@ export 'counter_component.dart';
 export 'scoring_zones.dart';
 export 'stopwatch_component.dart';
 export 'score_board_component.dart';
-export 'speed_contoller_component.dart';

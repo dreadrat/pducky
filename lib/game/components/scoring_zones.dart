@@ -84,8 +84,11 @@ class ScoringZone extends PositionedEntity
               ? const Color.fromARGB(255, 167, 187, 204).withOpacity(0.1)
               : Color.fromARGB(255, 69, 81, 146).withOpacity(1);
 
-    // Draw a rectangle with the size and position of the ScoringZone
-    canvas.drawRect(size.toRect(), paint);
+    // Draw a rounded rectangle with the size and position of the ScoringZone
+    final radius = Radius.circular(
+        20); // Adjust this value to change the roundness of the corners
+    final rrect = RRect.fromRectAndRadius(size.toRect(), radius);
+    canvas.drawRRect(rrect, paint);
   }
 
   @override
@@ -93,7 +96,7 @@ class ScoringZone extends PositionedEntity
     super.onGameResize(gameSize);
 
     // Set the size of the ScoringZone
-    size.setValues(gameSize.y * .1, gameSize.y * 2 / 3);
+    size.setValues(gameSize.y * .1, gameSize.y * 0.5);
 
     // Set the position of the ScoringZone based on the side
     if (side == 'left') {
