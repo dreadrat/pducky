@@ -11,23 +11,28 @@ class PauseButton extends GameButton {
     required Vector2 position,
     required ButtonSide side,
     required ButtonImage image,
+    required VoidCallback onTap,
     required ScoringCubit scoringCubit,
   }) : super(
           position: position,
           side: side,
           image: image,
-          onTap: () {},
+          onTap: onTap,
           scoringCubit: scoringCubit,
         );
 
   @override
-  void handleButtonPress() {
+  void handleButtonPress() async {
     if (isPaused) {
       gameRef.resumeEngine();
       isPaused = false;
+      spriteComponent.sprite =
+          await gameRef.loadSprite('assets/images/pause.png');
     } else {
       gameRef.pauseEngine();
       isPaused = true;
+      spriteComponent.sprite =
+          await gameRef.loadSprite('assets/images/play.png');
     }
   }
 
