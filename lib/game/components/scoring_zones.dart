@@ -96,7 +96,7 @@ class ScoringZone extends PositionedEntity
     super.onGameResize(gameSize);
 
     // Set the size of the ScoringZone
-    size.setValues(gameSize.y * .1, gameSize.y * 0.5);
+    size.setValues(gameSize.y * .05, gameSize.y * 0.5);
 
     // Set the position of the ScoringZone based on the side
     if (side == 'left') {
