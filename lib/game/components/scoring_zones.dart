@@ -7,10 +7,12 @@ import 'package:pducky/game/entities/ball/behaviors/collision_behaviour.dart';
 import 'package:pducky/game/game.dart';
 import 'package:pducky/game/pducky.dart';
 import 'package:pducky/game/cubit/cubit.dart';
+import 'package:flame/effects.dart';
 
 class ScoringZone extends PositionedEntity
     with HasGameRef<Pducky>, CollisionCallbacks {
   final ScoringCubit scoringCubit;
+
   // Add a new field for the ScoringCubit
 
   ScoringZone({
@@ -31,7 +33,7 @@ class ScoringZone extends PositionedEntity
   @override
   Future<void> onLoad() async {
     // Set the size of the ScoringZone
-    size.setValues(gameSize.y * .1, gameSize.y * 2 / 3);
+    size.setValues(gameSize.y * .05, gameSize.y * 0.5);
 
     // Set the position of the ScoringZone based on the side
     if (side == 'left') {

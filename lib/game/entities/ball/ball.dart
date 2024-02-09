@@ -18,6 +18,7 @@ class Ball extends PositionedEntity with HasGameRef {
   String currentImage = (Random().nextBool() ? 'puppy.png' : 'duck.png');
   final ScoringCubit scoringCubit;
   late CircleComponent circle;
+  late TextComponent textComponent;
 
   Ball({
     required super.position,
@@ -28,7 +29,7 @@ class Ball extends PositionedEntity with HasGameRef {
         ) {
     // Listen to the scoreIncreasedStream
     scoringCubit.scoreIncreasedStream.listen((_) {
-      triggerCircleEffect();
+      triggerScoreEffect();
       print('scoring_cubit heard in the ball');
     });
   }
@@ -36,15 +37,15 @@ class Ball extends PositionedEntity with HasGameRef {
   @override
   void onGameResize(Vector2 gameSize) {
     super.onGameResize(gameSize);
-    size.setValues(gameSize.y * 0.1, gameSize.y * 0.1);
+    size.setValues(gameSize.y * 0.08, gameSize.y * 0.08);
     position = Vector2(0, gameSize.y / 3);
+
     RectangleHitbox(size: size, anchor: Anchor.center);
   }
 
   @override
   Future<void> onLoad() async {
-    size.setValues(gameRef.size.y * 0.1, gameRef.size.y * 0.1);
-    position = Vector2(0, gameRef.size.y / 3);
+    size.setValues(gameRef.size.y * 0.08, gameRef.size.y * 0.08);
 
     final sprite = await gameRef.loadSprite('assets/images/$currentImage');
 
@@ -80,6 +81,15 @@ class Ball extends PositionedEntity with HasGameRef {
       },
       scoringCubit: scoringCubit,
     ));
+
+    textComponent = TextComponent(
+      text: ' Here',
+      position:
+          Vector2(size.x / 2, size.y / 2), // Position the text under the ball
+      anchor: Anchor.topCenter,
+    );
+
+    add(textComponent);
   }
 
   Future<void> playAudioBasedOnDirection(MovementDirection direction) async {
@@ -90,25 +100,8 @@ class Ball extends PositionedEntity with HasGameRef {
     }
   }
 
-  void triggerCircleEffect() {
-    circle.add(
-      SequenceEffect([
-        // Expand the circle to 2x the size of the sprite
-        ScaleEffect.to(
-          Vector2.all(2.0), // Replace 2.0 with the desired scale factor
-          EffectController(
-              duration: 0.5,
-              curve: Curves.easeOut), // Replace 0.5 with the desired duration
-        ),
-        // Fade out the circle
-        OpacityEffect.to(
-          0.0, // Fade out to 0 opacity
-          EffectController(
-              duration: 0.5,
-              curve: Curves.easeIn), // Replace 0.5 with the desired duration
-        ),
-      ]),
-    );
+  void triggerScoreEffect() {
+    print('triggering circle effect');
   }
 
   @override

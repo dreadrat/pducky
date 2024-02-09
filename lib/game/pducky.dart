@@ -27,7 +27,7 @@ class Pducky extends FlameGame
   final TextStyle textStyle;
 
   late final DateTime startTime;
-  late final Ball puppyDuck;
+  late Ball puppyDuck;
   late GameplayButtons gameplayButtons;
 
   int counter = 0;
@@ -42,7 +42,8 @@ class Pducky extends FlameGame
 
     final world = World(
       children: [
-        puppyDuck = Ball(position: size / 2, scoringCubit: scoringCubit),
+        puppyDuck = Ball(
+            position: Vector2(0, gameSize.y / 3), scoringCubit: scoringCubit),
         ScoringZone(
           gameSize: size,
           side: 'left',

@@ -28,14 +28,10 @@ class BouncingBehaviour extends Behavior with HasGameRef<Pducky> {
 
   void onResize(Vector2 gameSize) {
     super.onGameResize(gameSize);
+    startMoving();
   }
 
   void startMoving() {
-    if (parent is! PositionComponent) {
-      throw Exception(
-          'BouncingBehaviour can only be added to PositionComponent');
-    }
-
     PositionComponent parentComponent = parent as PositionComponent;
     double distance;
     timeToBounce = scoringCubit.state.speed;
