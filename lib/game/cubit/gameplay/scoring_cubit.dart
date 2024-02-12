@@ -40,7 +40,6 @@ class ScoringCubit extends Cubit<ScoringState> {
 
   void updateBallImage(BallImage image) {
     emit(state.copyWith(ballImage: image));
-    print('updateBallImage: $image'); // Add this
   }
 
   void increaseScore(MovementDirection direction) {
