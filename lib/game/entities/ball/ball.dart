@@ -30,7 +30,6 @@ class Ball extends PositionedEntity with HasGameRef {
     // Listen to the scoreIncreasedStream
     scoringCubit.scoreIncreasedStream.listen((_) {
       triggerScoreEffect();
-      print('scoring_cubit heard in the ball');
     });
   }
 
@@ -52,21 +51,22 @@ class Ball extends PositionedEntity with HasGameRef {
     _spriteComponent = SpriteComponent(
       sprite: sprite,
       size: size,
-      anchor: Anchor.centerLeft,
     );
 
-    add(_spriteComponent);
-
     circle = CircleComponent(
-      radius: 0.0, // Start with a radius of 0
+      radius: gameRef.size.y * 0.05,
+      anchor: Anchor.center,
+      position: Vector2(size.x / 2, size.y / 2),
+      // Start with a radius of 0
       paint: Paint()
         ..color =
-            Color.fromARGB(255, 170, 248, 1), // Make the circle bright yellow
+            Color.fromARGB(0, 170, 248, 1), // Make the circle bright yellow
     );
 
     add(circle);
+    add(_spriteComponent);
 
-    final hitbox = RectangleHitbox(size: size, anchor: Anchor.topLeft);
+    final hitbox = RectangleHitbox(size: size, anchor: Anchor.center);
     add(hitbox);
 
     add(BouncingBehaviour(
@@ -85,7 +85,7 @@ class Ball extends PositionedEntity with HasGameRef {
     textComponent = TextComponent(
       text: ' Here',
       position:
-          Vector2(size.x / 2, size.y / 2), // Position the text under the ball
+          Vector2(size.x / 2, size.y + 10), // Position the text under the ball
       anchor: Anchor.topCenter,
     );
 
@@ -101,7 +101,19 @@ class Ball extends PositionedEntity with HasGameRef {
   }
 
   void triggerScoreEffect() {
-    print('triggering circle effect');
+    // Create a ScaleEffect that doubles the size of the circle
+
+    final opacityEffect = OpacityEffect.to(
+      1,
+      EffectController(
+        duration: 0.5,
+        alternate: true,
+      ),
+    );
+
+    // Add the effect to the circle with the controller
+
+    circle.add(opacityEffect);
   }
 
   @override

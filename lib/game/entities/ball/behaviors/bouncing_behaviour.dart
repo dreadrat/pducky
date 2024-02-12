@@ -70,7 +70,7 @@ class BouncingBehaviour extends Behavior with HasGameRef<Pducky> {
           controller,
         ),
         ScaleEffect.to(
-          Vector2.all(1), // Scale back down to the original size
+          Vector2.all(0.5), // Scale back down to the original size
           EffectController(duration: 0.0),
         ),
       ]),

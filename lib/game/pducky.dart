@@ -65,7 +65,7 @@ class Pducky extends FlameGame
     );
     startTime = DateTime.now();
 
-    final camera = CameraComponent(world: world);
+    camera = CameraComponent(world: world);
     await addAll([world, camera]);
 
     camera.viewfinder.position = size / 2;
@@ -75,8 +75,7 @@ class Pducky extends FlameGame
   @override
   void onGameResize(Vector2 gameSize) {
     super.onGameResize(gameSize);
-    resetGame();
+    camera.viewfinder.position = size / 2;
+    camera.viewfinder.zoom = 1;
   }
-
-  void resetGame() {}
 }
