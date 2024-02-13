@@ -2,8 +2,6 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pducky/game/cubit/cubit.dart';
 
@@ -12,7 +10,19 @@ enum ButtonSide { Left, Right, Center }
 enum ButtonImage { Puppy, Duck, Minus, Plus, Pause, Play }
 
 class GameButton extends PositionedEntity
-    with HasGameRef, TapCallbacks, KeyboardHandler {
+    with HasGameRef, TapCallbacks, KeyboardHandler { // Provide a getter for _spriteComponent
+
+  GameButton(
+      {required super.position,
+      required this.side,
+      required this.image,
+      required this.onTap,
+      required this.scoringCubit,})
+      : super(
+          anchor: Anchor.center,
+          size: Vector2.all(0),
+          behaviors: [],
+        );
   final ButtonSide side;
   ButtonImage image;
   final VoidCallback onTap;
@@ -21,20 +31,7 @@ class GameButton extends PositionedEntity
 
   late SpriteComponent _spriteComponent;
   SpriteComponent get spriteComponent =>
-      _spriteComponent; // Provide a getter for _spriteComponent
-
-  GameButton(
-      {required super.position,
-      required this.side,
-      required this.image,
-      required this.onTap,
-      required this.scoringCubit,
-      positionType = PositionType.viewport})
-      : super(
-          anchor: Anchor.center,
-          size: Vector2.all(0),
-          behaviors: [],
-        );
+      _spriteComponent;
 
   @override
   Future<void> onLoad() async {
@@ -51,15 +48,14 @@ class GameButton extends PositionedEntity
 
   Future<void> addButtonImage() async {
     final sprite = await gameRef.loadSprite(
-      'assets/images/' +
-          {
+      'assets/images/${{
             ButtonImage.Puppy: 'puppy.png',
             ButtonImage.Duck: 'duck.png',
             ButtonImage.Minus: 'minus.png',
             ButtonImage.Plus: 'plus.png',
             ButtonImage.Pause: 'pause.png',
             ButtonImage.Play: 'play.png',
-          }[image]!,
+          }[image]!}',
     );
 
     // Initialize and add the sprite component
@@ -92,7 +88,7 @@ class GameButton extends PositionedEntity
 
   void handleButtonPress() {
     onTap();
-    BallImage ballImage =
+    final ballImage =
         image == ButtonImage.Puppy ? BallImage.Puppy : BallImage.Duck;
     scoringCubit.checkForScore(ballImage);
 
@@ -107,7 +103,7 @@ class GameButton extends PositionedEntity
           alternate: true,
         ),
       ),
-    ]));
+    ]),);
   }
 
   @override
@@ -152,17 +148,16 @@ class GameButton extends PositionedEntity
     return true;
   }
 
-  void changeButtonImage(ButtonImage newImage) async {
+  Future<void> changeButtonImage(ButtonImage newImage) async {
     final newSprite = await gameRef.loadSprite(
-      'assets/images/' +
-          {
+      'assets/images/${{
             ButtonImage.Puppy: 'puppy.png',
             ButtonImage.Duck: 'duck.png',
             ButtonImage.Minus: 'minus.png',
             ButtonImage.Plus: 'plus.png',
             ButtonImage.Pause: 'pause.png',
             ButtonImage.Play: 'play.png',
-          }[newImage]!,
+          }[newImage]!}',
     );
 
     // Remove the old sprite component from the game

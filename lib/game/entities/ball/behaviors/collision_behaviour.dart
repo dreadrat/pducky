@@ -1,17 +1,12 @@
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
-import 'package:flame/collisions.dart';
 import 'package:pducky/game/pducky.dart';
-import 'package:flame/geometry.dart'; // Import geometry for Collidable
 
 class CollidableBehavior extends Behavior
     with HasGameRef<Pducky>, CollisionCallbacks {
-  double opacity = 0.0;
+  double opacity = 0;
 
-  @override
-  void update(double dt) {
-    super.update(dt);
-  }
 
   @override
   void onCollision(Set<Vector2> points, PositionComponent other) {

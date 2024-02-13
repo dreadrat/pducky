@@ -1,15 +1,15 @@
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flame_audio/flame_audio.dart';
 import 'package:pducky/game/game.dart';
-import 'package:pducky/game/cubit/cubit.dart';
 
 enum MovementDirection { Left, Right }
 
 class BouncingBehaviour extends Behavior with HasGameRef<Pducky> {
+  BouncingBehaviour(
+      {required this.onDirectionChange, required this.scoringCubit,});
   late EffectController controller;
   MovementDirection direction = MovementDirection.Right;
   final ValueChanged<MovementDirection> onDirectionChange;
@@ -17,8 +17,6 @@ class BouncingBehaviour extends Behavior with HasGameRef<Pducky> {
 
   late ScoringCubit scoringCubit; // Add this
   double timeToBounce = 0;
-  BouncingBehaviour(
-      {required this.onDirectionChange, required this.scoringCubit});
 
   @override
   void onLoad() {
@@ -32,7 +30,7 @@ class BouncingBehaviour extends Behavior with HasGameRef<Pducky> {
   }
 
   void startMoving() {
-    PositionComponent parentComponent = parent as PositionComponent;
+    final parentComponent = parent as PositionComponent;
     double distance;
     timeToBounce = scoringCubit.state.speed;
 
@@ -53,7 +51,7 @@ class BouncingBehaviour extends Behavior with HasGameRef<Pducky> {
     }
 
     controller = EffectController(
-        duration: timeToBounce / 1000.0, curve: Curves.easeOut);
+        duration: timeToBounce / 1000.0, curve: Curves.easeOut,);
 
     parentComponent.add(
       MoveEffect.by(
@@ -71,7 +69,7 @@ class BouncingBehaviour extends Behavior with HasGameRef<Pducky> {
         ),
         ScaleEffect.to(
           Vector2.all(0.5), // Scale back down to the original size
-          EffectController(duration: 0.0),
+          EffectController(duration: 0),
         ),
       ]),
     );

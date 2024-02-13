@@ -3,19 +3,15 @@ import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/painting.dart';
-import 'package:pducky/game/components/pause_component.dart';
 import 'package:pducky/game/game.dart';
-import 'package:pducky/game/entities/ball/behaviors/behaviors.dart';
 import 'package:pducky/l10n/l10n.dart';
-
-import 'entities/entities.dart';
 
 class Pducky extends FlameGame
     with HasCollisionDetection, HasKeyboardHandlerComponents {
   Pducky(
       {required this.l10n,
       required this.effectPlayer,
-      required this.textStyle}) {
+      required this.textStyle,}) {
     images.prefix = '';
     debugMode = false;
   }
@@ -37,13 +33,13 @@ class Pducky extends FlameGame
 
   @override
   Future<void> onLoad() async {
-    Vector2 gameSize = size;
-    ScoringCubit scoringCubit = ScoringCubit();
+    final gameSize = size;
+    final scoringCubit = ScoringCubit();
 
     final world = World(
       children: [
         puppyDuck = Ball(
-            position: Vector2(0, gameSize.y / 3), scoringCubit: scoringCubit),
+            position: Vector2(0, gameSize.y / 3), scoringCubit: scoringCubit,),
         ScoringZone(
           gameSize: size,
           side: 'left',

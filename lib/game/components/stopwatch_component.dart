@@ -3,7 +3,7 @@ import 'package:pducky/game/game.dart';
 
 class StopwatchComponent extends PositionComponent with HasGameRef<Pducky> {
   late final TextComponent text;
-  double elapsedTime = 0.0;
+  double elapsedTime = 0;
 
   @override
   Future<void> onLoad() async {

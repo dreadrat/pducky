@@ -1,20 +1,19 @@
 import 'package:flame/collisions.dart';
-import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame/components.dart';
+import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flutter/material.dart';
 
 class Walls {
-  final Wall leftWall;
-  final Wall rightWall;
 
   Walls({required Vector2 gameSize})
       : leftWall = Wall.left(gameSize: gameSize),
         rightWall = Wall.right(gameSize: gameSize);
+  final Wall leftWall;
+  final Wall rightWall;
 }
 
 
 class Wall extends PositionedEntity  {
-  static final Vector2 _wallSize = Vector2(3, double.infinity);
 
   Wall._({
     required Vector2 center,
@@ -43,6 +42,7 @@ Wall.right({
 }) : this._(
     center: Vector2(gameSize.x - 3 / 2 - 5, gameSize.y / 2), // Subtract 5 pixels from the x-coordinate
 );
+  static final Vector2 _wallSize = Vector2(3, double.infinity);
 
 
 

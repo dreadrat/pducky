@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:ui';
 
+import 'package:bloc/bloc.dart';
 import 'package:flame_audio/flame_audio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pducky/game/entities/ball/behaviors/bouncing_behaviour.dart';
-import 'package:bloc/bloc.dart';
 
 enum BallImage {
   Puppy,
@@ -16,7 +14,7 @@ enum BallImage {
 class ScoringCubit extends Cubit<ScoringState> {
   ScoringCubit() : super(initialState);
 
-  static ScoringState initialState = ScoringState(
+  static ScoringState initialState = const ScoringState(
     ballImage: BallImage.Puppy,
     ballIsInScoringZone: false,
     score: 0,
@@ -48,15 +46,13 @@ class ScoringCubit extends Cubit<ScoringState> {
         missStreak: 0,
         hasTapped: true,
         direction:
-            direction)); // Reset the missed taps count when a score is recorded
+            direction,),); // Reset the missed taps count when a score is recorded
 
     switch (direction) {
       case MovementDirection.Left:
         FlameAudio.play('left_score.mp3');
-        break;
       case MovementDirection.Right:
         FlameAudio.play('right_score.mp3');
-        break;
     }
 
     // Notify listeners that the score has increased
@@ -64,13 +60,13 @@ class ScoringCubit extends Cubit<ScoringState> {
 
     // Change the color of the scoring zone
     scoringZoneColorNotifier.value = Colors.green;
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 1), () {
       scoringZoneColorNotifier.value = Colors.transparent;
     });
   }
 
   void increaseStreak() {
-    int newStreak = state.streak + 1;
+    final newStreak = state.streak + 1;
 
     // If the new streak score is a multiple of 10, speed up the game
     if (newStreak % 10 == 0) {
@@ -83,37 +79,37 @@ class ScoringCubit extends Cubit<ScoringState> {
   void wrongTap() {
     emit(state.copyWith(
         missStreak: state.missStreak + 1,
-        hasTapped: true)); // Set hasTapped to true when a wrong tap is recorded
+        hasTapped: true,),); // Set hasTapped to true when a wrong tap is recorded
     increaseMissedTaps(); // Increase the missed taps count when a wrong tap is recorded
     FlameAudio.play('wrong_tap.mp3');
     resetStreak();
   }
 
   void speedUpGame() {
-    double newSpeed = state.speed - 200;
+    final newSpeed = state.speed - 200;
     FlameAudio.play('speedup.mp3');
     emit(state.copyWith(speed: newSpeed));
   }
 
   void slowDownGame() {
-    double newSpeed = state.speed + 200;
+    final newSpeed = state.speed + 200;
     FlameAudio.play('slowdown.mp3');
     emit(state.copyWith(speed: newSpeed));
   }
 
   void increaseMissedTaps() {
-    int newMissedTaps = state.missStreak + 1;
+    final newMissedTaps = state.missStreak + 1;
     emit(state.copyWith(missStreak: newMissedTaps));
   }
 
-  void updateBallInScoringZone(bool isInZone) async {
+  Future<void> updateBallInScoringZone(bool isInZone) async {
     if (!isInZone && !state.hasTapped) {
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
     }
     if (isInZone) {
       emit(state.copyWith(
           hasTapped:
-              false)); // Only reset hasTapped to false when the ball enters the scoring zone
+              false,),); // Only reset hasTapped to false when the ball enters the scoring zone
     }
     emit(state.copyWith(ballIsInScoringZone: isInZone));
   }
@@ -142,14 +138,6 @@ class ScoringCubit extends Cubit<ScoringState> {
 }
 
 class ScoringState {
-  final BallImage ballImage;
-  final bool ballIsInScoringZone;
-  final int score;
-  final int streak;
-  final int missStreak;
-  final MovementDirection direction;
-  final double speed;
-  final bool hasTapped;
 
   const ScoringState({
     required this.ballImage,
@@ -161,6 +149,14 @@ class ScoringState {
     required this.speed,
     required this.hasTapped,
   });
+  final BallImage ballImage;
+  final bool ballIsInScoringZone;
+  final int score;
+  final int streak;
+  final int missStreak;
+  final MovementDirection direction;
+  final double speed;
+  final bool hasTapped;
 
   ScoringState copyWith({
     BallImage? ballImage,

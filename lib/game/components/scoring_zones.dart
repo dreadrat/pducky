@@ -1,17 +1,12 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/palette.dart';
-import 'package:flutter/material.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
-import 'package:pducky/game/entities/ball/behaviors/collision_behaviour.dart';
+import 'package:flutter/material.dart';
 import 'package:pducky/game/game.dart';
-import 'package:pducky/game/pducky.dart';
-import 'package:pducky/game/cubit/cubit.dart';
-import 'package:flame/effects.dart';
 
 class ScoringZone extends PositionedEntity
     with HasGameRef<Pducky>, CollisionCallbacks {
-  final ScoringCubit scoringCubit;
 
   // Add a new field for the ScoringCubit
 
@@ -24,9 +19,11 @@ class ScoringZone extends PositionedEntity
           size: Vector2.zero(),
           anchor: Anchor.topLeft,
         );
+  final ScoringCubit scoringCubit;
 
   final Vector2 gameSize;
   final String side;
+  @override
   bool isColliding =
       false; // Add a new property to track whether the ScoringZone is colliding
 
@@ -40,7 +37,7 @@ class ScoringZone extends PositionedEntity
       position.setFrom(Vector2.zero()); // The top left corner of the game
     } else if (side == 'right') {
       position.setFrom(
-          Vector2(gameSize.x - size.x, 0)); // The top right corner of the game
+          Vector2(gameSize.x - size.x, 0),); // The top right corner of the game
     }
 
     // Wait for the ScoringZone to be fully loaded before adding it to the game
@@ -81,14 +78,14 @@ class ScoringZone extends PositionedEntity
     final paint = BasicPalette.blue.paint()
       ..color = scoringCubit.scoringZoneColorNotifier.value == Colors.green
           ? Colors.green.withOpacity(
-              0.5) // Change the color to green when the user scores
+              0.5,) // Change the color to green when the user scores
           : isColliding
               ? const Color.fromARGB(255, 167, 187, 204).withOpacity(0.1)
-              : Color.fromARGB(255, 69, 81, 146).withOpacity(1);
+              : const Color.fromARGB(255, 69, 81, 146).withOpacity(1);
 
     // Draw a rounded rectangle with the size and position of the ScoringZone
-    final radius = Radius.circular(
-        20); // Adjust this value to change the roundness of the corners
+    const radius = Radius.circular(
+        20,); // Adjust this value to change the roundness of the corners
     final rrect = RRect.fromRectAndRadius(size.toRect(), radius);
     canvas.drawRRect(rrect, paint);
   }
@@ -105,7 +102,7 @@ class ScoringZone extends PositionedEntity
       position.setFrom(Vector2.zero()); // The top left corner of the game
     } else if (side == 'right') {
       position.setFrom(
-          Vector2(gameSize.x - size.x, 0)); // The top right corner of the game
+          Vector2(gameSize.x - size.x, 0),); // The top right corner of the game
     }
   }
 }

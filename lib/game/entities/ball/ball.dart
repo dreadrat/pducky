@@ -1,24 +1,17 @@
 import 'dart:async';
+import 'dart:math';
 
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/sprite.dart';
+import 'package:flame/effects.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flutter/material.dart';
-import 'package:flame/effects.dart';
-import 'package:pducky/game/entities/ball/behaviors/bouncing_behaviour.dart';
-import 'package:pducky/gen/assets.gen.dart';
-import 'package:flame_audio/flame_audio.dart';
-import 'package:flame/collisions.dart';
-import 'behaviors/behaviors.dart';
-import 'dart:math';
 import 'package:pducky/game/cubit/cubit.dart';
+import 'package:pducky/game/entities/ball/behaviors/behaviors.dart';
+import 'package:pducky/game/entities/ball/behaviors/bouncing_behaviour.dart';
 
 class Ball extends PositionedEntity with HasGameRef {
-  late SpriteComponent _spriteComponent;
-  String currentImage = (Random().nextBool() ? 'puppy.png' : 'duck.png');
-  final ScoringCubit scoringCubit;
-  late CircleComponent circle;
-  late TextComponent textComponent;
 
   Ball({
     required super.position,
@@ -32,6 +25,11 @@ class Ball extends PositionedEntity with HasGameRef {
       triggerScoreEffect();
     });
   }
+  late SpriteComponent _spriteComponent;
+  String currentImage = (Random().nextBool() ? 'puppy.png' : 'duck.png');
+  final ScoringCubit scoringCubit;
+  late CircleComponent circle;
+  late TextComponent textComponent;
 
   @override
   void onGameResize(Vector2 gameSize) {
@@ -60,7 +58,7 @@ class Ball extends PositionedEntity with HasGameRef {
       // Start with a radius of 0
       paint: Paint()
         ..color =
-            Color.fromARGB(0, 170, 248, 1), // Make the circle bright yellow
+            const Color.fromARGB(0, 170, 248, 1), // Make the circle bright yellow
     );
 
     add(circle);
@@ -71,16 +69,15 @@ class Ball extends PositionedEntity with HasGameRef {
 
     add(BouncingBehaviour(
       onDirectionChange: (direction) async {
-        BallImage newImage =
+        final newImage =
             Random().nextBool() ? BallImage.Puppy : BallImage.Duck;
-        ;
         final sprite = await gameRef.loadSprite(
-            'assets/images/${newImage == BallImage.Puppy ? 'puppy.png' : 'duck.png'}');
+            'assets/images/${newImage == BallImage.Puppy ? 'puppy.png' : 'duck.png'}',);
         _spriteComponent.sprite = sprite;
         scoringCubit.updateBallImage(newImage);
       },
       scoringCubit: scoringCubit,
-    ));
+    ),);
 
     textComponent = TextComponent(
       text: ' Here',
@@ -116,8 +113,4 @@ class Ball extends PositionedEntity with HasGameRef {
     circle.add(opacityEffect);
   }
 
-  @override
-  void update(double dt) {
-    super.update(dt);
-  }
 }

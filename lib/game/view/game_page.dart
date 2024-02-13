@@ -1,15 +1,14 @@
+import 'dart:io' show Platform;
+
 import 'package:flame/game.dart' hide Route;
 import 'package:flame_audio/bgm.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pducky/game/game.dart';
-import 'package:pducky/gen/assets.gen.dart';
 import 'package:pducky/l10n/l10n.dart';
 import 'package:pducky/loading/cubit/cubit.dart';
-import 'package:flutter/foundation.dart';
-
-import 'dart:io' show Platform;
 
 class GamePage extends StatelessWidget {
   const GamePage({super.key});

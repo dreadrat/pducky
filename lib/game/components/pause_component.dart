@@ -1,28 +1,20 @@
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:pducky/game/components/button_component.dart';
-import 'package:pducky/game/cubit/gameplay/scoring_cubit.dart';
-import 'package:flutter/foundation.dart';
 
 class PauseButton extends GameButton {
-  bool isPaused = false;
 
   PauseButton({
-    required Vector2 position,
-    required ButtonSide side,
-    required ButtonImage image,
-    required VoidCallback onTap,
-    required ScoringCubit scoringCubit,
-  }) : super(
-          position: position,
-          side: side,
-          image: image,
-          onTap: onTap,
-          scoringCubit: scoringCubit,
-        );
+    required Vector2 super.position,
+    required super.side,
+    required super.image,
+    required super.onTap,
+    required super.scoringCubit,
+  });
+  bool isPaused = false;
 
   @override
-  void handleButtonPress() async {
+  Future<void> handleButtonPress() async {
     if (isPaused) {
       gameRef.resumeEngine();
       isPaused = false;

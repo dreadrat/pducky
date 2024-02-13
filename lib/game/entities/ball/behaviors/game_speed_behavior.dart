@@ -1,5 +1,5 @@
-import 'behaviors.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
+import 'package:pducky/game/entities/ball/behaviors/behaviors.dart';
 
 class GameSpeedBehaviour extends Behavior {
 

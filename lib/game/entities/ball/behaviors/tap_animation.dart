@@ -1,7 +1,6 @@
 import 'package:flame/components.dart';
-import 'package:flame/events.dart';
 import 'package:flame/effects.dart';
-import 'package:flame_behaviors/flame_behaviors.dart';
+import 'package:flame/events.dart';
 
 class TapAnimation extends PositionComponent with HasGameRef, TapCallbacks {
   @override
@@ -17,6 +16,6 @@ class TapAnimation extends PositionComponent with HasGameRef, TapCallbacks {
         ),
       ),
       RemoveEffect(),
-    ]));
+    ]),);
   }
 }

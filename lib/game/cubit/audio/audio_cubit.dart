@@ -3,7 +3,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flame_audio/bgm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pducky/gen/assets.gen.dart';
 part 'audio_state.dart';
 
 class AudioCubit extends Cubit<AudioState> {
