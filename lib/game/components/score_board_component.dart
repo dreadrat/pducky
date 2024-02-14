@@ -1,14 +1,16 @@
 import 'package:flame/components.dart';
 import 'package:pducky/game/game.dart';
 
-class ScoreBoardComponent extends PositionComponent with HasGameRef<Pducky> { // Add scoringCubit as a field
+class ScoreBoardComponent extends PositionComponent with HasGameRef<Pducky> {
+  // Add scoringCubit as a field
 
   ScoreBoardComponent(this.scoringCubit)
       : super(
-            anchor: Anchor
-                .topCenter,);
+          anchor: Anchor.topCenter,
+        );
   late final TextComponent text;
-  final ScoringCubit scoringCubit; // Add scoringCubit as a constructor parameter
+  final ScoringCubit
+      scoringCubit; // Add scoringCubit as a constructor parameter
 
   @override
   Future<void> onLoad() async {

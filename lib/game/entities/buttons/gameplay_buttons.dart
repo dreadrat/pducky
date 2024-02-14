@@ -3,7 +3,8 @@ import 'package:pducky/game/components/button_component.dart';
 import 'package:pducky/game/components/pause_component.dart';
 import 'package:pducky/game/cubit/gameplay/scoring_cubit.dart';
 
-class GameplayButtons extends PositionComponent with HasGameRef { // Add this
+class GameplayButtons extends PositionComponent with HasGameRef {
+  // Add this
 
   GameplayButtons({required this.scoringCubit});
   final ScoringCubit scoringCubit; // Add this
@@ -19,17 +20,19 @@ class GameplayButtons extends PositionComponent with HasGameRef { // Add this
         onTap: () {},
       ),
       GameButton(
-          scoringCubit: scoringCubit,
-          position: Vector2.zero(),
-          side: ButtonSide.Left,
-          image: ButtonImage.Duck,
-          onTap: () {},),
+        scoringCubit: scoringCubit,
+        position: Vector2.zero(),
+        side: ButtonSide.Left,
+        image: ButtonImage.Duck,
+        onTap: () {},
+      ),
       GameButton(
-          scoringCubit: scoringCubit,
-          position: Vector2.zero(),
-          side: ButtonSide.Right,
-          image: ButtonImage.Duck,
-          onTap: () {},),
+        scoringCubit: scoringCubit,
+        position: Vector2.zero(),
+        side: ButtonSide.Right,
+        image: ButtonImage.Duck,
+        onTap: () {},
+      ),
       GameButton(
         scoringCubit: scoringCubit,
         position: Vector2.zero(),
@@ -37,12 +40,7 @@ class GameplayButtons extends PositionComponent with HasGameRef { // Add this
         image: ButtonImage.Puppy,
         onTap: () {},
       ),
-      PauseButton(
-          position: Vector2.all(0),
-          side: ButtonSide.Center,
-          image: ButtonImage.Pause,
-          scoringCubit: scoringCubit,
-          onTap: () {},),
+      PauseButtonComponent()
     ]);
   }
 }
