@@ -10,15 +10,14 @@ enum ButtonSide { Left, Right, Center }
 enum ButtonImage { Puppy, Duck, Minus, Plus, Pause, Play }
 
 class GameButton extends PositionedEntity
-    with HasGameRef, TapCallbacks, KeyboardHandler { // Provide a getter for _spriteComponent
-
-  GameButton(
-      {required super.position,
-      required this.side,
-      required this.image,
-      required this.onTap,
-      required this.scoringCubit,})
-      : super(
+    with HasGameRef, TapCallbacks, KeyboardHandler {
+  GameButton({
+    required super.position,
+    required this.side,
+    required this.image,
+    required this.onTap,
+    required this.scoringCubit,
+  }) : super(
           anchor: Anchor.center,
           size: Vector2.all(0),
           behaviors: [],
@@ -30,8 +29,7 @@ class GameButton extends PositionedEntity
   final positionType = PositionType.game;
 
   late SpriteComponent _spriteComponent;
-  SpriteComponent get spriteComponent =>
-      _spriteComponent;
+  SpriteComponent get spriteComponent => _spriteComponent;
 
   @override
   Future<void> onLoad() async {
@@ -49,13 +47,13 @@ class GameButton extends PositionedEntity
   Future<void> addButtonImage() async {
     final sprite = await gameRef.loadSprite(
       'assets/images/${{
-            ButtonImage.Puppy: 'puppy.png',
-            ButtonImage.Duck: 'duck.png',
-            ButtonImage.Minus: 'minus.png',
-            ButtonImage.Plus: 'plus.png',
-            ButtonImage.Pause: 'pause.png',
-            ButtonImage.Play: 'play.png',
-          }[image]!}',
+        ButtonImage.Puppy: 'puppy.png',
+        ButtonImage.Duck: 'duck.png',
+        ButtonImage.Minus: 'minus.png',
+        ButtonImage.Plus: 'plus.png',
+        ButtonImage.Pause: 'pause.png',
+        ButtonImage.Play: 'play.png',
+      }[image]!}',
     );
 
     // Initialize and add the sprite component
@@ -95,15 +93,17 @@ class GameButton extends PositionedEntity
     print('Button image: $image');
     print('Scoring cubit image: ${scoringCubit.state.ballImage}');
 
-    add(SequenceEffect([
-      ScaleEffect.by(
-        Vector2.all(1.5),
-        EffectController(
-          duration: 0.1,
-          alternate: true,
+    add(
+      SequenceEffect([
+        ScaleEffect.by(
+          Vector2.all(1.5),
+          EffectController(
+            duration: 0.1,
+            alternate: true,
+          ),
         ),
-      ),
-    ]),);
+      ]),
+    );
   }
 
   @override
@@ -151,13 +151,13 @@ class GameButton extends PositionedEntity
   Future<void> changeButtonImage(ButtonImage newImage) async {
     final newSprite = await gameRef.loadSprite(
       'assets/images/${{
-            ButtonImage.Puppy: 'puppy.png',
-            ButtonImage.Duck: 'duck.png',
-            ButtonImage.Minus: 'minus.png',
-            ButtonImage.Plus: 'plus.png',
-            ButtonImage.Pause: 'pause.png',
-            ButtonImage.Play: 'play.png',
-          }[newImage]!}',
+        ButtonImage.Puppy: 'puppy.png',
+        ButtonImage.Duck: 'duck.png',
+        ButtonImage.Minus: 'minus.png',
+        ButtonImage.Plus: 'plus.png',
+        ButtonImage.Pause: 'pause.png',
+        ButtonImage.Play: 'play.png',
+      }[newImage]!}',
     );
 
     // Remove the old sprite component from the game

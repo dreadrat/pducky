@@ -8,12 +8,13 @@ import 'package:pducky/l10n/l10n.dart';
 
 class Pducky extends FlameGame
     with HasCollisionDetection, HasKeyboardHandlerComponents {
-  Pducky(
-      {required this.l10n,
-      required this.effectPlayer,
-      required this.textStyle,}) {
+  Pducky({
+    required this.l10n,
+    required this.effectPlayer,
+    required this.textStyle,
+  }) {
     images.prefix = '';
-    debugMode = false;
+    debugMode = true;
   }
 
   final AppLocalizations l10n;
@@ -39,7 +40,9 @@ class Pducky extends FlameGame
     final world = World(
       children: [
         puppyDuck = Ball(
-            position: Vector2(0, gameSize.y / 3), scoringCubit: scoringCubit,),
+          position: Vector2(0, gameSize.y / 3),
+          scoringCubit: scoringCubit,
+        ),
         ScoringZone(
           gameSize: size,
           side: 'left',

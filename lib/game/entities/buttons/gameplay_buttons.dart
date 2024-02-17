@@ -40,7 +40,6 @@ class GameplayButtons extends PositionComponent with HasGameRef {
         image: ButtonImage.Puppy,
         onTap: () {},
       ),
-      PauseButtonComponent()
     ]);
   }
 }
