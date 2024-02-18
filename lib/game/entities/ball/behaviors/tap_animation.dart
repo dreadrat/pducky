@@ -7,15 +7,17 @@ class TapAnimation extends PositionComponent with HasGameRef, TapCallbacks {
   void onTapDown(TapDownEvent event) {
     // Do something on tap down update event.
 
-    add(SequenceEffect([
-      ScaleEffect.by(
-        Vector2.all(1.5),
-        EffectController(
-          duration: 0.2,
-          alternate: true,
+    add(
+      SequenceEffect([
+        ScaleEffect.by(
+          Vector2.all(1.5),
+          EffectController(
+            duration: 0.2,
+            alternate: true,
+          ),
         ),
-      ),
-      RemoveEffect(),
-    ]),);
+        RemoveEffect(),
+      ]),
+    );
   }
 }

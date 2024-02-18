@@ -1,17 +1,15 @@
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-
 import 'package:flame/events.dart';
-
-import 'package:flame/game.dart';
+import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:pducky/game/game.dart';
 
-class PauseButtonComponent extends PositionComponent
-    with HasGameRef<Pducky>, TapCallbacks {
-  late final TextComponent text;
+class PauseButtonComponent extends PositionedEntity with HasGameRef<Pducky> {
+  late TextComponent text;
 
-  PauseButtonComponent() {
-    add(RectangleHitbox());
+  PauseButtonComponent() : super() {
+    size = Vector2(100, 50);
+    anchor = Anchor.center;
+    add(PauseButtonBehavior(this));
   }
 
   @override
@@ -23,6 +21,8 @@ class PauseButtonComponent extends PositionComponent
             TextPaint(style: gameRef.textStyle.copyWith(fontSize: 16)),
       ),
     );
+
+    text.position = size / 2;
   }
 
   @override
@@ -34,15 +34,28 @@ class PauseButtonComponent extends PositionComponent
   @override
   void update(double dt) {
     super.update(dt);
-
-    // Set the text to "Pause" or "Resume" based on the game state
-    text.text = gameRef.paused ? 'Resume' : 'Pause';
   }
+  // Update the text based on the game state
+}
+
+class PauseButtonBehavior extends Behavior
+    with TapCallbacks, HasGameRef<Pducky> {
+  late PauseButtonComponent pauseButtonComponent;
+
+  PauseButtonBehavior(this.pauseButtonComponent);
 
   @override
   void onTapDown(TapDownEvent event) {
-    // Toggle the paused state of the game when the button is tapped
     print('Pause Tapped');
-    gameRef.paused = !gameRef.paused;
+
+    if (gameRef.paused) {
+      gameRef.resumeEngine();
+      pauseButtonComponent.text = TextComponent(text: 'Pause');
+      print('Resumed');
+    } else {
+      gameRef.pauseEngine();
+      pauseButtonComponent.text = TextComponent(text: 'Resume');
+      print('Paused');
+    }
   }
 }
