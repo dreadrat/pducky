@@ -43,6 +43,7 @@ class Pducky extends FlameGame
         puppyDuck = Ball(
           position: Vector2(0, gameSize.y / 3),
           scoringCubit: scoringCubit,
+          sessionCubit: sessionCubit,
         ),
         ScoringZone(
           gameSize: size,

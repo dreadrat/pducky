@@ -12,10 +12,10 @@ import 'package:pducky/game/entities/ball/behaviors/behaviors.dart';
 import 'package:pducky/game/entities/ball/behaviors/bouncing_behaviour.dart';
 
 class Ball extends PositionedEntity with HasGameRef {
-
   Ball({
     required super.position,
     required this.scoringCubit,
+    required this.sessionCubit,
   }) : super(
           anchor: Anchor.center,
           size: Vector2.all(0),
@@ -24,10 +24,17 @@ class Ball extends PositionedEntity with HasGameRef {
     scoringCubit.scoreIncreasedStream.listen((_) {
       triggerScoreEffect();
     });
+
+    // Listen to the SessionCubit state changes
+    sessionCubit.stream.listen((state) {
+      textComponent.text = state.currentWord;
+      triggerTextEffect();
+    });
   }
   late SpriteComponent _spriteComponent;
   String currentImage = (Random().nextBool() ? 'puppy.png' : 'duck.png');
   final ScoringCubit scoringCubit;
+  final SessionCubit sessionCubit;
   late CircleComponent circle;
   late TextComponent textComponent;
 
@@ -57,8 +64,8 @@ class Ball extends PositionedEntity with HasGameRef {
       position: Vector2(size.x / 2, size.y / 2),
       // Start with a radius of 0
       paint: Paint()
-        ..color =
-            const Color.fromARGB(0, 170, 248, 1), // Make the circle bright yellow
+        ..color = const Color.fromARGB(
+            0, 170, 248, 1), // Make the circle bright yellow
     );
 
     add(circle);
@@ -67,22 +74,24 @@ class Ball extends PositionedEntity with HasGameRef {
     final hitbox = RectangleHitbox(size: size, anchor: Anchor.center);
     add(hitbox);
 
-    add(BouncingBehaviour(
-      onDirectionChange: (direction) async {
-        final newImage =
-            Random().nextBool() ? BallImage.Puppy : BallImage.Duck;
-        final sprite = await gameRef.loadSprite(
-            'assets/images/${newImage == BallImage.Puppy ? 'puppy.png' : 'duck.png'}',);
-        _spriteComponent.sprite = sprite;
-        scoringCubit.updateBallImage(newImage);
-      },
-      scoringCubit: scoringCubit,
-    ),);
+    add(
+      BouncingBehaviour(
+        onDirectionChange: (direction) async {
+          final newImage =
+              Random().nextBool() ? BallImage.Puppy : BallImage.Duck;
+          final sprite = await gameRef.loadSprite(
+            'assets/images/${newImage == BallImage.Puppy ? 'puppy.png' : 'duck.png'}',
+          );
+          _spriteComponent.sprite = sprite;
+          scoringCubit.updateBallImage(newImage);
+        },
+        scoringCubit: scoringCubit,
+      ),
+    );
 
     textComponent = TextComponent(
-      text: ' Here',
-      position:
-          Vector2(size.x / 2, size.y + 10), // Position the text under the ball
+      text: sessionCubit.state.currentWord, // Use currentWord from SessionCubit
+      position: Vector2(size.x / 2, size.y + 10),
       anchor: Anchor.topCenter,
     );
 
@@ -113,4 +122,21 @@ class Ball extends PositionedEntity with HasGameRef {
     circle.add(opacityEffect);
   }
 
+  void triggerTextEffect() {
+    final textIntroEffectController = EffectController(
+      duration: 0.5,
+      curve: Curves.easeInOut,
+    );
+    // Create a ScaleEffect that doubles the size of the text
+    final scaleEffect = ScaleEffect.by(
+      Vector2.all(2.0), textIntroEffectController, // Set duration directly
+    );
+
+    // Create an OpacityEffect that fades in the text
+    final opacityEffect = OpacityEffect.fadeIn(textIntroEffectController);
+
+    // Add the effects to the textComponent
+    textComponent.add(scaleEffect);
+    textComponent.add(opacityEffect);
+  }
 }
