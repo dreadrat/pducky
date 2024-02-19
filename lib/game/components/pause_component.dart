@@ -21,6 +21,11 @@ class PauseButtonComponent extends PositionedEntity with HasGameRef<Pducky> {
             TextPaint(style: gameRef.textStyle.copyWith(fontSize: 16)),
       ),
     );
+    if (gameRef.paused) {
+      text.text = 'Resume';
+    } else {
+      text.text = 'Pause';
+    }
 
     text.position = size / 2;
   }

@@ -1,9 +1,15 @@
+import 'package:bloc/bloc.dart';
 import 'package:flame/components.dart';
 import 'package:pducky/game/game.dart';
+import 'package:pducky/game/cubit/cubit.dart'; // Import the SessionCubit
 
 class StopwatchComponent extends PositionComponent with HasGameRef<Pducky> {
   late final TextComponent text;
   double elapsedTime = 0;
+  final SessionCubit sessionCubit; // Add a SessionCubit field
+
+  StopwatchComponent(
+      this.sessionCubit); // Initialize the SessionCubit in the constructor
 
   @override
   Future<void> onLoad() async {
@@ -31,10 +37,11 @@ class StopwatchComponent extends PositionComponent with HasGameRef<Pducky> {
     // Increment the elapsed time if the game is not paused
     if (!gameRef.paused) {
       elapsedTime += dt;
+      sessionCubit.incrementTime(dt); // Update the SessionCubit
     }
 
     // Round the elapsed time to the nearest second
-    final roundedElapsedTime = elapsedTime.round();
+    final roundedElapsedTime = sessionCubit.state.elapsedTime.round();
 
     // Calculate minutes and seconds
     final minutes = (roundedElapsedTime / 60).floor();

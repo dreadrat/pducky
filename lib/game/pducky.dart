@@ -14,7 +14,7 @@ class Pducky extends FlameGame
     required this.textStyle,
   }) {
     images.prefix = '';
-    debugMode = true;
+    debugMode = false;
   }
 
   final AppLocalizations l10n;
@@ -36,6 +36,7 @@ class Pducky extends FlameGame
   Future<void> onLoad() async {
     final gameSize = size;
     final scoringCubit = ScoringCubit();
+    final sessionCubit = SessionCubit();
 
     final world = World(
       children: [
@@ -55,7 +56,7 @@ class Pducky extends FlameGame
           scoringCubit: scoringCubit,
         ),
         puppyDuck,
-        StopwatchComponent(),
+        StopwatchComponent(sessionCubit),
         GameplayButtons(scoringCubit: scoringCubit),
         ScoreBoardComponent(scoringCubit),
 
