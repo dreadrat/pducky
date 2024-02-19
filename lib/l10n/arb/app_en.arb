@@ -4,11 +4,15 @@
   "@startVeryGoodGame": {
     "description": "The initial start button of the game application"
   },
-  "titleAppBarTitle": "Pducky",
+  "titleAppBarTitle": "Puppy Duck",
   "@titleAppBarTitle": {
     "description": "Text shown in the AppBar of the Title Page"
   },
-  "titleButtonStart": "Start",
+ "titleDescription": "Start The Session",
+  "@titleDescription": {
+    "description": "Text shown in the start Button of the Title Page"
+  },
+  "titleButtonStart": "Start The Session",
   "@titleButtonStart": {
     "description": "Text shown in the start Button of the Title Page"
   },

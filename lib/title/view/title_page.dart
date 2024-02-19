@@ -1,3 +1,4 @@
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:pducky/game/game.dart';
 import 'package:pducky/l10n/l10n.dart';
@@ -30,18 +31,26 @@ class TitleView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    FlameAudio.play('intro_title.mp3');
 
-    return Center(
-      child: SizedBox(
-        width: 250,
-        height: 64,
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.of(context).pushReplacement<void, void>(GamePage.route());
-          },
-          child: Center(child: Text(l10n.titleButtonStart)),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Text(l10n.titleDescription),
+        Center(
+          child: SizedBox(
+            width: 250,
+            height: 64,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .pushReplacement<void, void>(GamePage.route());
+              },
+              child: Center(child: Text(l10n.titleButtonStart)),
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }
