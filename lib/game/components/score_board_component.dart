@@ -38,6 +38,7 @@ class ScoreBoardComponent extends PositionComponent with HasGameRef<Pducky> {
 
     text.text = 'Score: ${scoringCubit.state.score}, '
         'Streak: ${scoringCubit.state.streak}, '
+        'Misses: ${scoringCubit.state.missStreak}, '
         'Speed: ${scoringCubit.state.speed}'; // Update the text to display the score, streak, and speed
   }
 }

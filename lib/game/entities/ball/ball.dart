@@ -129,14 +129,10 @@ class Ball extends PositionedEntity with HasGameRef {
     );
     // Create a ScaleEffect that doubles the size of the text
     final scaleEffect = ScaleEffect.by(
-      Vector2.all(2.0), textIntroEffectController, // Set duration directly
+      Vector2.all(2), textIntroEffectController, // Set duration directly
     );
-
-    // Create an OpacityEffect that fades in the text
-    final opacityEffect = OpacityEffect.fadeIn(textIntroEffectController);
 
     // Add the effects to the textComponent
     textComponent.add(scaleEffect);
-    textComponent.add(opacityEffect);
   }
 }

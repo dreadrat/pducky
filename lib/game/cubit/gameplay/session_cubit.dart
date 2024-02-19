@@ -1,15 +1,20 @@
 import 'package:bloc/bloc.dart';
 
 class SessionState {
-  SessionState({required this.elapsedTime, this.currentWord = ''});
+  SessionState(
+      {required this.elapsedTime,
+      this.currentWord = '',
+      this.isPaused = false});
 
   final double elapsedTime;
   final String currentWord;
+  final bool isPaused;
 
-  SessionState copyWith({String? currentWord}) {
+  SessionState copyWith({String? currentWord, bool? isPaused}) {
     return SessionState(
       elapsedTime: elapsedTime,
       currentWord: currentWord ?? this.currentWord,
+      isPaused: isPaused ?? this.isPaused,
     );
   }
 }
@@ -22,11 +27,21 @@ class SessionCubit extends Cubit<SessionState> {
   }
 
   void incrementTime(double dt) {
-    final newTime = state.elapsedTime + dt;
-    emit(SessionState(elapsedTime: newTime));
+    if (!state.isPaused) {
+      final newTime = state.elapsedTime + dt;
+      emit(SessionState(elapsedTime: newTime));
+    }
   }
 
   void resetTime() {
     emit(SessionState(elapsedTime: 0));
+  }
+
+  void pauseGame() {
+    emit(state.copyWith(isPaused: true));
+  }
+
+  void resumeGame() {
+    emit(state.copyWith(isPaused: false));
   }
 }

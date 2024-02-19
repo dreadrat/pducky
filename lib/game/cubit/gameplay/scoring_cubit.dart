@@ -21,7 +21,7 @@ class ScoringCubit extends Cubit<ScoringState> {
     streak: 0,
     missStreak: 0,
     direction: MovementDirection.Left,
-    speed: 3500,
+    speed: 3000,
     hasTapped: false,
   );
 
@@ -41,12 +41,14 @@ class ScoringCubit extends Cubit<ScoringState> {
   }
 
   void increaseScore(MovementDirection direction) {
-    emit(state.copyWith(
+    emit(
+      state.copyWith(
         score: state.score + 1,
         missStreak: 0,
         hasTapped: true,
-        direction:
-            direction,),); // Reset the missed taps count when a score is recorded
+        direction: direction,
+      ),
+    ); // Reset the missed taps count when a score is recorded
 
     switch (direction) {
       case MovementDirection.Left:
@@ -77,10 +79,12 @@ class ScoringCubit extends Cubit<ScoringState> {
   }
 
   void wrongTap() {
-    emit(state.copyWith(
-        missStreak: state.missStreak + 1,
-        hasTapped: true,),); // Set hasTapped to true when a wrong tap is recorded
-    increaseMissedTaps(); // Increase the missed taps count when a wrong tap is recorded
+    emit(
+      state.copyWith(
+        hasTapped: true,
+      ),
+    ); // Set hasTapped to true when a wrong tap is recorded
+
     FlameAudio.play('wrong_tap.mp3');
     resetStreak();
   }
@@ -98,18 +102,25 @@ class ScoringCubit extends Cubit<ScoringState> {
   }
 
   void increaseMissedTaps() {
-    final newMissedTaps = state.missStreak + 1;
-    emit(state.copyWith(missStreak: newMissedTaps));
+    final newMissStreak = state.missStreak + 1;
+    emit(state.copyWith(missStreak: newMissStreak));
+    if (newMissStreak % 5 == 0) {
+      // Add parentheses around the condition
+      slowDownGame();
+    }
   }
 
   Future<void> updateBallInScoringZone(bool isInZone) async {
     if (!isInZone && !state.hasTapped) {
-      await Future.delayed(const Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 200));
+      increaseMissedTaps(); // Increase the missed taps count when the ball leaves the scoring zone and no score has been made
     }
     if (isInZone) {
-      emit(state.copyWith(
-          hasTapped:
-              false,),); // Only reset hasTapped to false when the ball enters the scoring zone
+      emit(
+        state.copyWith(
+          hasTapped: false,
+        ),
+      ); // Only reset hasTapped to false when the ball enters the scoring zone
     }
     emit(state.copyWith(ballIsInScoringZone: isInZone));
   }
@@ -138,7 +149,6 @@ class ScoringCubit extends Cubit<ScoringState> {
 }
 
 class ScoringState {
-
   const ScoringState({
     required this.ballImage,
     required this.ballIsInScoringZone,

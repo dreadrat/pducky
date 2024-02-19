@@ -8,8 +8,10 @@ import 'package:pducky/game/game.dart';
 enum MovementDirection { Left, Right }
 
 class BouncingBehaviour extends Behavior with HasGameRef<Pducky> {
-  BouncingBehaviour(
-      {required this.onDirectionChange, required this.scoringCubit,});
+  BouncingBehaviour({
+    required this.onDirectionChange,
+    required this.scoringCubit,
+  });
   late EffectController controller;
   MovementDirection direction = MovementDirection.Right;
   final ValueChanged<MovementDirection> onDirectionChange;
@@ -51,7 +53,9 @@ class BouncingBehaviour extends Behavior with HasGameRef<Pducky> {
     }
 
     controller = EffectController(
-        duration: timeToBounce / 1000.0, curve: Curves.easeOut,);
+      duration: timeToBounce / 1000.0,
+      curve: Curves.easeOut,
+    );
 
     parentComponent.add(
       MoveEffect.by(
@@ -64,11 +68,11 @@ class BouncingBehaviour extends Behavior with HasGameRef<Pducky> {
     parentComponent.add(
       SequenceEffect([
         ScaleEffect.to(
-          Vector2.all(1.8), // Replace 1.5 with the desired growth factor
+          Vector2.all(1.5), // Replace 1.5 with the desired growth factor
           controller,
         ),
         ScaleEffect.to(
-          Vector2.all(0.5), // Scale back down to the original size
+          Vector2.all(0.8), // Scale back down to the original size
           EffectController(duration: 0),
         ),
       ]),

@@ -5,6 +5,7 @@ import 'package:pducky/game/game.dart';
 
 class PauseButtonComponent extends PositionedEntity with HasGameRef<Pducky> {
   late TextComponent text;
+  double dt = 0.0;
 
   PauseButtonComponent() : super() {
     size = Vector2(100, 50);
@@ -16,16 +17,12 @@ class PauseButtonComponent extends PositionedEntity with HasGameRef<Pducky> {
   Future<void> onLoad() async {
     await add(
       text = TextComponent(
+        text: 'Pause',
         anchor: Anchor.center,
         textRenderer:
             TextPaint(style: gameRef.textStyle.copyWith(fontSize: 16)),
       ),
     );
-    if (gameRef.paused) {
-      text.text = 'Resume';
-    } else {
-      text.text = 'Pause';
-    }
 
     text.position = size / 2;
   }
@@ -36,16 +33,13 @@ class PauseButtonComponent extends PositionedEntity with HasGameRef<Pducky> {
     position.setValues(gameRef.size.x / 2, 80);
   }
 
-  @override
-  void update(double dt) {
-    super.update(dt);
-  }
   // Update the text based on the game state
 }
 
 class PauseButtonBehavior extends Behavior
     with TapCallbacks, HasGameRef<Pducky> {
   late PauseButtonComponent pauseButtonComponent;
+  double dt = 0.0;
 
   PauseButtonBehavior(this.pauseButtonComponent);
 
@@ -55,12 +49,8 @@ class PauseButtonBehavior extends Behavior
 
     if (gameRef.paused) {
       gameRef.resumeEngine();
-      pauseButtonComponent.text = TextComponent(text: 'Pause');
-      print('Resumed');
     } else {
       gameRef.pauseEngine();
-      pauseButtonComponent.text = TextComponent(text: 'Resume');
-      print('Paused');
     }
   }
 }
