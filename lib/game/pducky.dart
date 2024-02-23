@@ -5,6 +5,7 @@ import 'package:flame/input.dart';
 import 'package:flutter/painting.dart';
 import 'package:pducky/game/game.dart';
 import 'package:pducky/l10n/l10n.dart';
+import 'package:pducky/game/cubit/gameplay/session_speaking.dart';
 
 class Pducky extends FlameGame
     with HasCollisionDetection, HasKeyboardHandlerComponents {
@@ -65,7 +66,7 @@ class Pducky extends FlameGame
       ],
     );
     startTime = DateTime.now();
-
+    await narratedAudio();
     camera = CameraComponent(world: world);
     await addAll([world, camera]);
 

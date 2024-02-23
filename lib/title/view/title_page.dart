@@ -31,7 +31,7 @@ class TitleView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    FlameAudio.play('intro_title.mp3');
+    //FlameAudio.play('intro_title.mp3');
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
