@@ -10,7 +10,7 @@ Future<void> narratedAudio() async {
   // Create an instance of AudioPlayer
   AudioPlayer audioPlayer = AudioPlayer();
 
-  List<Map<String, dynamic>> timepoints = await speakAndPlay(text, audioPlayer);
+  List<Map<String, dynamic>> timepoints = await speakAndPlay(text);
   print('speakAndPlay function returned: $timepoints');
 
   // Do something with timepoints

@@ -1,13 +1,16 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flame_audio/flame_audio.dart';
 
 //Converting the text input to audio and SSML markup with timestamps
 
 StreamController<String> wordStreamController = StreamController<String>();
+AudioPlayer audioPlayer = AudioPlayer();
 
 Future<Map<String, dynamic>> convertTextToSpeechAndSave(String text) async {
   print('Starting to convert text to speech');
@@ -55,7 +58,8 @@ Future<Map<String, dynamic>> convertTextToSpeechAndSave(String text) async {
     body: jsonEncode(body), // Encode the body to JSON
   );
 
-// Handle the response
+// Handle the
+  print('Response body: ${response.body}');
   Map<String, dynamic> jsonData =
       jsonDecode(response.body) as Map<String, dynamic>;
   print('Successfully received response');
@@ -104,7 +108,8 @@ Future<Map<String, dynamic>> convertTextToSpeechAndSave(String text) async {
   File ssmlFile = File(ssmlFilePath);
 
   // Write the SSML markup and the timepoints to the file
-  await ssmlFile.writeAsString('$ssml\n\nTimepoints: $timepoints');
+  await ssmlFile
+      .writeAsString('$ssml\n\nTimepoints: ${jsonEncode(timepoints)}');
   print('SSML file and timepoints written successfully');
   return {
     'timepoints': timepoints,
@@ -115,7 +120,8 @@ Future<Map<String, dynamic>> convertTextToSpeechAndSave(String text) async {
 //Speak and Play the audio
 
 Future<List<Map<String, dynamic>>> speakAndPlay(
-    String text, AudioPlayer audioPlayer) async {
+  String text,
+) async {
   print('Starting to speak and play');
 
   // Get the path of the directory where you're saving the file in the `speakMe` function
@@ -137,12 +143,26 @@ Future<List<Map<String, dynamic>>> speakAndPlay(
     File ssmlFile = File(ssmlFilePath);
     String ssmlContent = await ssmlFile.readAsString();
 
+    print('SSML content: $ssmlContent'); // Log the SSML content
+
     // Extract the timepoints content from the SSML content
-    String timepointsContent = ssmlContent.split('Timepoints: ')[1];
+    List<String> splitContent = ssmlContent.split('Timepoints: ');
+    if (splitContent.length < 2) {
+      print('No timepoints found in the SSML content');
+    }
+
+    RegExp timepointsRegExp = RegExp(r'Timepoints: (\[.*\])');
+    Match? timepointsMatch = timepointsRegExp.firstMatch(ssmlContent);
+    String timepointsContent =
+        timepointsMatch != null ? timepointsMatch.group(1)! : '';
+
+    print('Timepoints content: $timepointsContent');
 
     // Extract the timepoints from the SSML content and the timepoints content
-    List<Map<String, dynamic>> timepoints =
-        extractTimepoints(ssmlContent, timepointsContent);
+    List<Map<String, dynamic>> timepoints = timepointsContent.isNotEmpty
+        ? List<Map<String, dynamic>>.from(
+            jsonDecode(timepointsContent) as List<dynamic>)
+        : [];
 
     result = {
       'audioFilePath': filePath,
@@ -154,15 +174,10 @@ Future<List<Map<String, dynamic>>> speakAndPlay(
     result = await convertTextToSpeechAndSave(text);
   }
 
-  print('Setting audio source to $filePath');
   await audioPlayer.setSource(DeviceFileSource(filePath));
 
   // Get the timepoints
   List<dynamic> timepoints = result['timepoints'] as List<dynamic>;
-  print('Timepoints: $timepoints');
-  timepoints.forEach((timepoint) {
-    print('Timepoint: $timepoint');
-  });
 
   Timer? timer;
   int milliseconds = 0;
@@ -179,6 +194,11 @@ Future<List<Map<String, dynamic>>> speakAndPlay(
       // Start the timer
       timer = Timer.periodic(Duration(milliseconds: 50), (Timer t) {
         milliseconds += 50;
+        if (timepoints.isEmpty) {
+          print('No timepoints found');
+          return;
+        }
+
         for (int i = 0; i < timepoints.length; i++) {
           num? timepoint = timepoints[i]['timeSeconds'] * 1000
               as num; // convert to milliseconds
@@ -213,34 +233,48 @@ String sanitizeFilename(String filename) {
 
 List<Map<String, dynamic>> extractTimepoints(
     String ssmlContent, String timepointsContent) {
+  print('SSML content: $ssmlContent'); // Log the SSML content
+  print('Timepoints content: $timepointsContent'); // Log the timepoints content
+
   RegExp markRegExp = RegExp(r"<mark name='(mark\d+)'\/>");
   Iterable<Match> matches = markRegExp.allMatches(ssmlContent);
+
+  List<Map<String, dynamic>> timepointsContentList =
+      List<Map<String, dynamic>>.from(
+          jsonDecode(timepointsContent) as List<dynamic>);
+
+  // Ensure keys in timepointsContentList are properly formatted
+  timepointsContentList = timepointsContentList.map((timepoint) {
+    return timepoint.map((key, value) {
+      return MapEntry('"' + key + '"', value);
+    });
+  }).toList();
 
   List<Map<String, dynamic>> timepoints = [];
   for (Match match in matches) {
     String markName = match.group(1)!;
+    print('Mark name: $markName'); // Log the mark name
+
     Map<String, dynamic>? timepoint =
-        extractTimepoint(timepointsContent, markName);
+        extractTimepoint(timepointsContentList, markName);
+    print('Extracted timepoint: $timepoint'); // Log the extracted timepoint
+
     if (timepoint != null) {
       timepoints.add(timepoint);
     }
   }
 
+  print('Extracted timepoints: $timepoints'); // Log the extracted timepoints
   return timepoints;
 }
 
 Map<String, dynamic>? extractTimepoint(
-    String timepointsContent, String markName) {
-  RegExp timepointRegExp =
-      RegExp(r"\{markName: $markName, timeSeconds: (\d+\.\d+)\}");
-  Match? match = timepointRegExp.firstMatch(timepointsContent);
-  if (match != null) {
-    double timeSeconds = double.parse(match.group(1)!);
-    return {
-      'markName': markName,
-      'timeSeconds': timeSeconds,
-    };
-  } else {
-    return null;
+    List<Map<String, dynamic>> timepointsContent, String markName) {
+  for (var timepoint in timepointsContent) {
+    if (timepoint['markName'] == markName) {
+      return timepoint;
+    }
   }
+  print('No match found for mark name'); // Log that no match was found
+  return null;
 }

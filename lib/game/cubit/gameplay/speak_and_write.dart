@@ -19,8 +19,7 @@ class AudioController {
       await Future.delayed(Duration(milliseconds: (startTime * 1000).round()));
 
       // Use the speakAndPlay function to play the audio and get the timepoints
-      List<Map<String, dynamic>> timepoints =
-          await speakAndPlay(text, audioPlayer);
+      List<Map<String, dynamic>> timepoints = await speakAndPlay(text);
 
       // Use the SessionCubit to update the current word
       for (var timepoint in timepoints) {
