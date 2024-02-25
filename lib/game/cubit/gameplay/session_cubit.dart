@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flame/game.dart';
 import 'package:pducky/game/cubit/gameplay/session_speaking.dart';
 
 class SessionState {
@@ -21,7 +22,9 @@ class SessionState {
 }
 
 class SessionCubit extends Cubit<SessionState> {
-  SessionCubit() : super(SessionState(elapsedTime: 0)) {
+  final FlameGame gameRef;
+
+  SessionCubit(this.gameRef) : super(SessionState(elapsedTime: 0)) {
     print('SessionCubit initialized');
   }
   List<TimedSpeechComponent> timedSpeechComponents = [];

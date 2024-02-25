@@ -4,105 +4,85 @@ import 'package:flutter/material.dart';
 import 'package:pducky/game/cubit/cubit.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
-import 'package:xml/xml.dart' as xml;
-import 'package:xml/xml_events.dart';
 import 'package:pducky/game/pducky.dart';
 
-class SpeechComponent extends Component with HasGameRef<Pducky> {
-  final SessionCubit sessionCubit;
-  final String filename;
-  List<Map<String, dynamic>> timepoints = [];
-  int currentIndex = 0;
-  DateTime? audioStartTime; // Add this line
+final textStyle = TextStyle(
+  color: const Color.fromARGB(255, 248, 248, 248),
+  fontSize: 24,
+);
 
+class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
   SpeechComponent({
     required this.sessionCubit,
     required this.filename,
   }) {
     loadTimepoints();
   }
+  final SessionCubit sessionCubit;
+  final String filename;
+  List<Map<String, dynamic>> timepoints = [];
+  int currentIndex = 0;
+  String? currentWord;
+
+  void start() {
+    if (timepoints.isNotEmpty) {
+      currentWord = timepoints[0]['word'] as String?;
+    }
+    print(timepoints[0]['word']);
+    // Start the audio playback after a delay of 0.2 seconds
+    Future.delayed(Duration(milliseconds: 200), () {
+      FlameAudio.play('speech/$filename.mp3');
+    });
+  }
 
   Future<void> loadTimepoints() async {
-    print('Loading timepoints...');
-
     // Load the JSON file
     String fileContents =
         await rootBundle.loadString('assets/audio/speech/$filename.json');
-    print('File loaded.');
 
     // Parse the timepoints list
     List<dynamic> decodedJson = jsonDecode(fileContents) as List<dynamic>;
     timepoints =
         decodedJson.map((item) => item as Map<String, dynamic>).toList();
-    print('Timepoints extracted: $timepoints');
   }
 
   @override
   void update(double dt) {
     super.update(dt);
 
-    // Check if the game is paused
-    if (sessionCubit.state.isPaused) {
-      print('Game is paused.');
-      return;
-    }
-
-    // Check if timepoints is initialized
-    if (timepoints == null) {
-      print('Timepoints is not initialized yet.');
-      return;
-    }
-
-    // Check if it's time to highlight the next word
-    if (currentIndex < timepoints.length &&
-        timepoints[currentIndex]['timeSeconds'] != null &&
-        audioStartTime != null && // Make sure the audio has started playing
-        DateTime.now().difference(audioStartTime!).inSeconds >=
-            (timepoints[currentIndex]['timeSeconds'] as num)) {
-      print('Time to highlight the next word.');
+    // Update the current word
+    if (currentIndex < timepoints.length) {
+      currentWord = timepoints[currentIndex]['word'] as String?;
+      sessionCubit.updateCurrentWord(currentWord!);
       currentIndex++;
     }
   }
 
   @override
   void render(Canvas canvas) {
-    super.render(canvas);
-
-    // Render the current, previous, and next words
-    // This is just a placeholder, you'll need to implement this
-    TextPainter textPainter = TextPainter(
-      text: TextSpan(
-        text: currentIndex < timepoints.length
-            ? timepoints[currentIndex]['word'] as String
-            : '',
-        style: TextStyle(color: Colors.white, fontSize: 28.0),
-      ),
-      textDirection: TextDirection.ltr,
+    // Clear the canvas
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, gameRef.size.x, gameRef.size.y),
+      Paint()..color = Colors.transparent,
     );
 
-    // Layout the text
-    textPainter.layout();
+    // Draw the current word from sessionCubit
+    if (sessionCubit.state.currentWord != null) {
+      final textSpan = TextSpan(
+        text: sessionCubit.state.currentWord,
+        style: textStyle,
+      );
+      final textPainter = TextPainter(
+        text: textSpan,
+        textDirection: TextDirection.ltr,
+      );
+      textPainter.layout();
 
-    // Calculate the center position of the game viewport
-    Vector2 center = gameRef.size / 2;
+      // Calculate the position where the text should be rendered
+      double xPosition = gameRef.size.x / 2 - (textPainter.width / 2);
+      double yPosition = gameRef.size.y / 2 - (textPainter.height / 2);
 
-    // Calculate the position of the text so that it's centered
-    double x = center.x - textPainter.width / 2;
-    double y = center.y - textPainter.height / 2;
-    Offset textPosition = Offset(x, y);
-
-    // Draw the text
-    textPainter.paint(canvas, textPosition);
-
-    print(
-        'Rendering word: ${currentIndex < timepoints.length ? timepoints[currentIndex]['word'] as String : ''}');
-  }
-
-  void start() {
-    // Start the audio playback
-    print('Starting audio playback...');
-    FlameAudio.play('speech/$filename.mp3');
-    audioStartTime =
-        DateTime.now(); // Set the start time when the audio starts playing
+      textPainter.paint(canvas, Offset(xPosition, yPosition));
+    }
   }
 }

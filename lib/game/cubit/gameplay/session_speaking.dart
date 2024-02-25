@@ -31,5 +31,10 @@ class SessionSpeaking {
       ),
       // Add more TimedSpeechComponents as needed
     ];
+
+    // Add the SpeechComponent instances to the game
+    for (var timedSpeechComponent in sessionCubit.timedSpeechComponents) {
+      sessionCubit.gameRef.add(timedSpeechComponent.speechComponent);
+    }
   }
 }
