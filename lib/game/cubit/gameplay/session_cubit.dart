@@ -24,8 +24,9 @@ class SessionState {
 class SessionCubit extends Cubit<SessionState> {
   final FlameGame gameRef;
 
-  SessionCubit(this.gameRef) : super(SessionState(elapsedTime: 0)) {
-    print('SessionCubit initialized');
+  SessionCubit(this.gameRef, {String currentWord = ''})
+      : super(SessionState(elapsedTime: 0, currentWord: currentWord)) {
+    print('SessionCubit initialized with current word: $currentWord');
   }
   List<TimedSpeechComponent> timedSpeechComponents = [];
   void updateCurrentWord(String word) {
