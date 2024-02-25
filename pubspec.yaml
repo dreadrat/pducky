@@ -21,7 +21,8 @@ dependencies:
   google_fonts: ^6.0.0
   http: ^1.1.2
   intl: ^0.18.0
-
+  xml: ^6.5.0
+  
 dev_dependencies:
   bloc_test: ^9.1.5
   flame_test: ^1.14.0
@@ -39,3 +40,4 @@ flutter:
     - assets/audio/
     - assets/images/
     - assets/licenses/poppins/
+    - assets/audio/speech/

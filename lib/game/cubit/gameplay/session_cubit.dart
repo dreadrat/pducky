@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:pducky/game/cubit/gameplay/session_speaking.dart';
 
 class SessionState {
   SessionState(
@@ -20,16 +21,33 @@ class SessionState {
 }
 
 class SessionCubit extends Cubit<SessionState> {
-  SessionCubit() : super(SessionState(elapsedTime: 0));
-
+  SessionCubit() : super(SessionState(elapsedTime: 0)) {
+    print('SessionCubit initialized');
+  }
+  List<TimedSpeechComponent> timedSpeechComponents = [];
   void updateCurrentWord(String word) {
     emit(state.copyWith(currentWord: word));
+    print('Session Cubit: Updating current word to: $word');
+  }
+
+  void checkSpeechComponents() {
+    var timedSpeechComponentsCopy =
+        List<TimedSpeechComponent>.from(timedSpeechComponents);
+    for (var timedSpeechComponent in timedSpeechComponentsCopy) {
+      if (state.elapsedTime >= timedSpeechComponent.startTime) {
+        print(
+            'Starting speech component at time: ${timedSpeechComponent.startTime}');
+        timedSpeechComponent.speechComponent.start();
+        timedSpeechComponents.remove(timedSpeechComponent);
+      }
+    }
   }
 
   void incrementTime(double dt) {
     if (!state.isPaused) {
       final newTime = state.elapsedTime + dt;
       emit(SessionState(elapsedTime: newTime));
+      checkSpeechComponents();
     }
   }
 

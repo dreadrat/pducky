@@ -1,18 +1,35 @@
-import 'tts_controller.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:pducky/game/components/components.dart';
+import 'package:pducky/game/cubit/cubit.dart';
 
-Future<void> narratedAudio() async {
-  print('narratedAudio function called');
+class TimedSpeechComponent {
+  final SpeechComponent speechComponent;
+  final int startTime;
 
-  String text = "Welcome to PuppyDuck"; // Replace with your own text
-  print('Text to be spoken: $text');
+  TimedSpeechComponent({
+    required this.speechComponent,
+    required this.startTime,
+  });
+}
 
-  // Create an instance of AudioPlayer
-  AudioPlayer audioPlayer = AudioPlayer();
-
-  List<Map<String, dynamic>> timepoints = await speakAndPlay(text);
-  print('speakAndPlay function returned: $timepoints');
-
-  // Do something with timepoints
-  print('Timepoints: $timepoints');
+class SessionSpeaking {
+  void loadSpeechComponents(SessionCubit sessionCubit) {
+    sessionCubit.timedSpeechComponents = [
+      TimedSpeechComponent(
+        speechComponent: SpeechComponent(
+          sessionCubit: sessionCubit,
+          filename: 'hi,_and_welcome_to_puppyduck',
+        ),
+        startTime: 3, // Start time in seconds
+      ),
+      TimedSpeechComponent(
+        speechComponent: SpeechComponent(
+          sessionCubit: sessionCubit,
+          filename:
+              'today,_we_are_going_to_be_working_on_that_negative_thought_you_just_can\'t_seem_to_shake',
+        ),
+        startTime: 10, // Start time in seconds
+      ),
+      // Add more TimedSpeechComponents as needed
+    ];
+  }
 }
