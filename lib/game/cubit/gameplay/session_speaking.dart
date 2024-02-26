@@ -1,5 +1,6 @@
 import 'package:pducky/game/components/components.dart';
 import 'package:pducky/game/cubit/cubit.dart';
+import 'package:pducky/game/pducky.dart';
 
 class TimedSpeechComponent {
   final SpeechComponent speechComponent;
@@ -12,7 +13,7 @@ class TimedSpeechComponent {
 }
 
 class SessionSpeaking {
-  void loadSpeechComponents(SessionCubit sessionCubit) {
+  void loadSpeechComponents(SessionCubit sessionCubit, Pducky game) {
     sessionCubit.timedSpeechComponents = [
       TimedSpeechComponent(
         speechComponent: SpeechComponent(

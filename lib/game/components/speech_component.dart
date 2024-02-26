@@ -87,11 +87,6 @@ class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
       print('SessionCubit currentWord: ${sessionCubit.state.currentWord}');
     }
 
-    // Slide the word to the right
-    if (wordPosition < 0) {
-      wordPosition += dt * 10; // Adjust the speed as needed
-    }
-
     // Fade out the entire phrase after the audio finishes playing
     if (!isAudioPlaying && fadeOutTicker == null) {
       fadeOutTicker = Ticker((Duration duration) {
@@ -109,7 +104,7 @@ class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
   void render(Canvas canvas) {
     // Draw the current word
     if (currentWord != null) {
-      double clampedOpacity = opacity.clamp(0.0, 1.0);
+      double clampedOpacity = opacity.clamp(0.5, 1.0);
       final textSpan = TextSpan(
         text: currentWord,
         style: textStyle.copyWith(

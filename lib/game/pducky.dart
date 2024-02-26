@@ -67,11 +67,9 @@ class Pducky extends FlameGame
       ],
     );
     startTime = DateTime.now();
-
+    sessionSpeaking.loadSpeechComponents(sessionCubit, this);
     camera = CameraComponent(world: world);
     await addAll([world, camera]);
-
-    sessionSpeaking.loadSpeechComponents(sessionCubit);
 
     camera.viewfinder.position = size / 2;
     camera.viewfinder.zoom = 1;
