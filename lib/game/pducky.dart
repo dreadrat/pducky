@@ -30,13 +30,14 @@ class Pducky extends FlameGame
   int counter = 0;
 
   @override
-  Color backgroundColor() => const Color(0xFF2A48DF);
+  Color backgroundColor() => Color.fromARGB(255, 73, 73, 112);
 
   @override
   Future<void> onLoad() async {
     final gameSize = size;
     final scoringCubit = ScoringCubit();
-    final sessionCubit = SessionCubit();
+    final sessionCubit = SessionCubit(this);
+    final sessionSpeaking = SessionSpeaking();
 
     final world = World(
       children: [
@@ -65,7 +66,8 @@ class Pducky extends FlameGame
       ],
     );
     startTime = DateTime.now();
-
+    final sessionSpeaking = SessionSpeaking(puppyDuck);
+    sessionSpeaking.loadSpeechComponents(sessionCubit);
     camera = CameraComponent(world: world);
     await addAll([world, camera]);
 
