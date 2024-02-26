@@ -13,8 +13,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../entities/ball/ball.dart';
 
 final textStyle = TextStyle(
-  color: Colors.black,
-  fontSize: 24,
+  color: const Color.fromARGB(255, 222, 218, 218),
+  fontSize: 32,
 );
 
 class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
@@ -46,26 +46,24 @@ class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
     Future.delayed(Duration(milliseconds: 200), () {
       FlameAudio.play('speech/$filename.mp3').then((_) {
         isAudioPlaying = false;
+        print('Audio has finished playing. isAudioPlaying: $isAudioPlaying');
       });
 
       isAudioPlaying = true;
       audioStartTime = DateTime.now(); // Add this line
+      print('Audio has started playing. isAudioPlaying: $isAudioPlaying');
     });
   }
 
   Future<void> loadTimepoints() async {
-    print('Loading timepoints...');
-
     // Load the JSON file
     String fileContents =
         await rootBundle.loadString('assets/audio/speech/$filename.json');
-    print('File loaded.');
 
     // Parse the timepoints list
     List<dynamic> decodedJson = jsonDecode(fileContents) as List<dynamic>;
     timepoints =
         decodedJson.map((item) => item as Map<String, dynamic>).toList();
-    print('Timepoints extracted: $timepoints');
   }
 
   @override
@@ -73,7 +71,7 @@ class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
     super.onGameResize(size);
 
     // Update the position of the component based on the new size
-    position = size / 2;
+    position.y = size.y / 3.5;
   }
 
   @override
@@ -83,12 +81,11 @@ class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
     // Access the Ball instance
     PositionComponent ball = gameRef.puppyDuck;
 
-    position.y = size.y / 2;
+    position.y = size.y / 3.5;
     // Update the position of the SpeechComponent to match the ball's position
-    position.setFrom(ball.position);
+    position.x = ball.position.x;
 
     // Check if the current time is greater than the timeSeconds of the next word
-
     if (currentIndex < timepoints.length - 1 &&
         audioStartTime != null &&
         DateTime.now().difference(audioStartTime!).inMilliseconds / 1000 >
@@ -98,23 +95,26 @@ class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
       wordPosition = -1.0;
 
       // Get the SessionCubit instance and update the currentWord
-
       sessionCubit.updateCurrentWord(currentWord!);
 
-      print('SpeechComponent currentWordA $currentWord');
-      print('SessionCubit currentWord: ${sessionCubit.state.currentWord}');
-    }
-
-    // Fade out the entire phrase after the audio finishes playing
-    if (!isAudioPlaying && fadeOutTicker == null) {
-      fadeOutTicker = Ticker((Duration duration) {
-        opacity =
-            1.0 - duration.inMilliseconds / 100.0; // Adjust the speed as needed
-        if (opacity <= 0) {
-          fadeOutTicker!.stop();
-        }
-      });
-      fadeOutTicker!.start();
+      // If this is the final word, start a timer to start the fadeOutTicker after 1 second
+      if (currentIndex == timepoints.length - 1) {
+        Future.delayed(Duration(seconds: 1), () {
+          if (fadeOutTicker == null) {
+            fadeOutTicker = Ticker((Duration duration) {
+              opacity = 1.0 -
+                  duration.inMilliseconds / 100.0; // Adjust the speed as needed
+              if (opacity <= 0) {
+                fadeOutTicker!.stop();
+                print('Fade out ticker has stopped. Opacity: $opacity');
+              }
+              // Trigger a visual update
+            });
+            fadeOutTicker!.start();
+            print('Fade out ticker has started. Opacity: $opacity');
+          }
+        });
+      }
     }
   }
 
@@ -122,11 +122,13 @@ class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
   void render(Canvas canvas) {
     // Draw the current word
     if (currentWord != null) {
-      double clampedOpacity = opacity.clamp(0.5, 1.0);
+      double clampedOpacity = opacity.clamp(0.0, 1.0);
       final textSpan = TextSpan(
         text: currentWord,
         style: textStyle.copyWith(
-            color: textStyle.color!.withOpacity(clampedOpacity)),
+            color: textStyle.color!.withOpacity(clampedOpacity),
+            fontSize: gameRef.size.y *
+                0.1), // Set the font size to 10% of the game height
       );
       final textPainter = TextPainter(
         text: textSpan,

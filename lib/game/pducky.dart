@@ -31,7 +31,7 @@ class Pducky extends FlameGame
   int counter = 0;
 
   @override
-  Color backgroundColor() => const Color(0xFF2A48DF);
+  Color backgroundColor() => Color.fromARGB(255, 51, 64, 129);
 
   @override
   Future<void> onLoad() async {

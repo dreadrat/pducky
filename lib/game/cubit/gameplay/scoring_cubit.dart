@@ -97,7 +97,7 @@ class ScoringCubit extends Cubit<ScoringState> {
 
   void slowDownGame() {
     final newSpeed = state.speed + 200;
-    FlameAudio.play('slowdown.mp3');
+    FlameAudio.play('slowdown.mp3', volume: 0.5);
     emit(state.copyWith(speed: newSpeed));
   }
 
