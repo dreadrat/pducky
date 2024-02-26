@@ -7,6 +7,7 @@ import 'package:flame/effects.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flutter/material.dart';
+import 'package:pducky/game/components/ball_text_area_component.dart';
 import 'package:pducky/game/cubit/cubit.dart';
 import 'package:pducky/game/entities/ball/behaviors/behaviors.dart';
 import 'package:pducky/game/entities/ball/behaviors/bouncing_behaviour.dart';
@@ -20,6 +21,9 @@ class Ball extends PositionedEntity with HasGameRef {
           anchor: Anchor.center,
           size: Vector2.all(0),
         ) {
+    // Initialize textComponent here with BallTextArea
+    textComponent = BallTextArea(sessionCubit.state.currentWord);
+
     // Listen to the scoreIncreasedStream
     scoringCubit.scoreIncreasedStream.listen((_) {
       triggerScoreEffect();
@@ -28,7 +32,7 @@ class Ball extends PositionedEntity with HasGameRef {
     // Listen to the SessionCubit state changes
     sessionCubit.stream.listen((state) {
       textComponent.text = state.currentWord;
-      triggerTextEffect();
+      // Update the text of BallTextArea
     });
   }
   late SpriteComponent _spriteComponent;
@@ -36,7 +40,7 @@ class Ball extends PositionedEntity with HasGameRef {
   final ScoringCubit scoringCubit;
   final SessionCubit sessionCubit;
   late CircleComponent circle;
-  late TextComponent textComponent;
+  late BallTextArea textComponent; // Change this to BallTextArea
 
   @override
   void onGameResize(Vector2 gameSize) {
@@ -89,7 +93,7 @@ class Ball extends PositionedEntity with HasGameRef {
       ),
     );
 
-    textComponent = TextComponent(
+    TextComponent textComponent = TextComponent(
       text: sessionCubit.state.currentWord, // Use currentWord from SessionCubit
       position: Vector2(size.x / 2, size.y + 10),
       anchor: Anchor.topCenter,

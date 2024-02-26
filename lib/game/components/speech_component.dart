@@ -36,7 +36,6 @@ class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
   void start() {
     if (timepoints.isNotEmpty) {
       currentWord = timepoints[0]['word'] as String?;
-      sessionCubit.updateCurrentWord(currentWord!);
     }
     print(timepoints[0]['word']);
     // Start the audio playback after a delay of 0.2 seconds
