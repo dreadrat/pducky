@@ -69,15 +69,32 @@ class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
 
   @override
   void onGameResize(Vector2 size) {
+<<<<<<< Updated upstream
     // Adjust the position of the SpeechComponent to be in the center of the screen
     this.y = size.y / 2;
+=======
+    super.onGameResize(size);
+
+    // Update the position of the component based on the new size
+    position.y = size.y / 3;
+>>>>>>> Stashed changes
   }
 
   @override
   void update(double dt) {
     super.update(dt);
+<<<<<<< Updated upstream
     this.y = size.y / 2;
     this.x = ball.x;
+=======
+
+    // Access the Ball instance
+    PositionComponent ball = gameRef.puppyDuck;
+
+    position.y = size.y / 3;
+    // Update the position of the SpeechComponent to match the ball's position
+    position.x = ball.position.x;
+>>>>>>> Stashed changes
 
     // Check if the current time is greater than the timeSeconds of the next word
     if (currentIndex < timepoints.length - 1 &&
