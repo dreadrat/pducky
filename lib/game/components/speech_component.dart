@@ -128,7 +128,7 @@ class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
         style: textStyle.copyWith(
             color: textStyle.color!.withOpacity(clampedOpacity),
             fontSize: gameRef.size.y *
-                0.1), // Set the font size to 10% of the game height
+                0.08), // Set the font size to 10% of the game height
       );
       final textPainter = TextPainter(
         text: textSpan,
