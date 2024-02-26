@@ -1,6 +1,7 @@
 import 'package:pducky/game/components/components.dart';
 import 'package:pducky/game/cubit/cubit.dart';
 import 'package:pducky/game/pducky.dart';
+import 'package:pducky/game/entities/entities.dart';
 
 class TimedSpeechComponent {
   final SpeechComponent speechComponent;
@@ -17,6 +18,7 @@ class SessionSpeaking {
     sessionCubit.timedSpeechComponents = [
       TimedSpeechComponent(
         speechComponent: SpeechComponent(
+          ball: game.puppyDuck,
           sessionCubit: sessionCubit,
           filename: 'hi,_and_welcome_to_puppyduck',
         ),
@@ -24,6 +26,7 @@ class SessionSpeaking {
       ),
       TimedSpeechComponent(
         speechComponent: SpeechComponent(
+          ball: game.puppyDuck,
           sessionCubit: sessionCubit,
           filename:
               'today,_we_are_going_to_be_working_on_that_negative_thought_you_just_can\'t_seem_to_shake',

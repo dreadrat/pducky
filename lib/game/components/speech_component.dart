@@ -10,19 +10,22 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../entities/ball/ball.dart';
+
 final textStyle = TextStyle(
   color: Colors.black,
   fontSize: 24,
 );
 
 class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
-  SpeechComponent({
-    required this.sessionCubit,
-    required this.filename,
-  }) {
+  SpeechComponent(
+      {required this.sessionCubit,
+      required this.filename,
+      required this.ball}) {
     loadTimepoints();
   }
   final SessionCubit sessionCubit;
+  final PositionComponent ball;
   final String filename;
   List<Map<String, dynamic>> timepoints = [];
   int currentIndex = 0;
@@ -66,8 +69,23 @@ class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
   }
 
   @override
+  void onGameResize(Vector2 size) {
+    super.onGameResize(size);
+
+    // Update the position of the component based on the new size
+    position = size / 2;
+  }
+
+  @override
   void update(double dt) {
     super.update(dt);
+
+    // Access the Ball instance
+    PositionComponent ball = gameRef.puppyDuck;
+
+    position.y = size.y / 2;
+    // Update the position of the SpeechComponent to match the ball's position
+    position.setFrom(ball.position);
 
     // Check if the current time is greater than the timeSeconds of the next word
 
@@ -83,7 +101,7 @@ class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
 
       sessionCubit.updateCurrentWord(currentWord!);
 
-      print('SpeechComponent currentWord: $currentWord');
+      print('SpeechComponent currentWordA $currentWord');
       print('SessionCubit currentWord: ${sessionCubit.state.currentWord}');
     }
 
