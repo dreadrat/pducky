@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flame/game.dart';
 import 'package:pducky/game/cubit/gameplay/session_speaking.dart';
+import 'package:pducky/game/timed_form.dart';
 
 class SessionState {
   SessionState(
@@ -25,13 +26,15 @@ class SessionCubit extends Cubit<SessionState> {
   final FlameGame gameRef;
 
   SessionCubit(this.gameRef, {String currentWord = ''})
-      : super(SessionState(elapsedTime: 0, currentWord: currentWord)) {
-    print('SessionCubit initialized with current word: $currentWord');
-  }
+      : super(SessionState(elapsedTime: 0, currentWord: currentWord)) {}
   List<TimedSpeechComponent> timedSpeechComponents = [];
+
+  final timedFormComponents = [
+    TimedFormComponent(startTime: 5.0),
+  ];
+
   void updateCurrentWord(String word) {
     emit(state.copyWith(currentWord: word));
-    print('Session Cubit: Updating current word to: $word');
   }
 
   void checkSpeechComponents() {
@@ -39,10 +42,20 @@ class SessionCubit extends Cubit<SessionState> {
         List<TimedSpeechComponent>.from(timedSpeechComponents);
     for (var timedSpeechComponent in timedSpeechComponentsCopy) {
       if (state.elapsedTime >= timedSpeechComponent.startTime) {
-        print(
-            'Starting speech component at time: ${timedSpeechComponent.startTime}');
         timedSpeechComponent.speechComponent.start();
         timedSpeechComponents.remove(timedSpeechComponent);
+      }
+    }
+  }
+
+  void checkInputComponents() {
+    var timedFormComponentsCopy =
+        List<TimedFormComponent>.from(timedFormComponents);
+    for (var timedFormComponent in timedFormComponentsCopy) {
+      if (state.elapsedTime >= timedFormComponent.startTime) {
+        print('Matched input components');
+        timedFormComponent.start(this);
+        timedFormComponents.remove(timedFormComponent);
       }
     }
   }
@@ -52,6 +65,7 @@ class SessionCubit extends Cubit<SessionState> {
       final newTime = state.elapsedTime + dt;
       emit(SessionState(elapsedTime: newTime));
       checkSpeechComponents();
+      checkInputComponents();
     }
   }
 

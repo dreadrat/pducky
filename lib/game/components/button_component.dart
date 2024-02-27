@@ -90,9 +90,6 @@ class GameButton extends PositionedEntity
         image == ButtonImage.Puppy ? BallImage.Puppy : BallImage.Duck;
     scoringCubit.checkForScore(ballImage);
 
-    print('Button image: $image');
-    print('Scoring cubit image: ${scoringCubit.state.ballImage}');
-
     add(
       SequenceEffect([
         ScaleEffect.by(

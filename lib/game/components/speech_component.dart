@@ -34,24 +34,18 @@ class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
   double wordPosition = 0.0;
   double opacity = 1.0;
   Ticker? fadeOutTicker;
-  bool isAudioPlaying = false;
 
   void start() {
     if (timepoints.isNotEmpty) {
       currentWord = timepoints[0]['word'] as String?;
       sessionCubit.updateCurrentWord(currentWord!);
     }
-    print(timepoints[0]['word']);
+
     // Start the audio playback after a delay of 0.2 seconds
     Future.delayed(Duration(milliseconds: 200), () {
-      FlameAudio.play('speech/$filename.mp3').then((_) {
-        isAudioPlaying = false;
-        print('Audio has finished playing. isAudioPlaying: $isAudioPlaying');
-      });
+      FlameAudio.play('speech/$filename.mp3').then((_) {});
 
-      isAudioPlaying = true;
       audioStartTime = DateTime.now(); // Add this line
-      print('Audio has started playing. isAudioPlaying: $isAudioPlaying');
     });
   }
 
@@ -106,12 +100,10 @@ class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
                   duration.inMilliseconds / 100.0; // Adjust the speed as needed
               if (opacity <= 0) {
                 fadeOutTicker!.stop();
-                print('Fade out ticker has stopped. Opacity: $opacity');
               }
               // Trigger a visual update
             });
             fadeOutTicker!.start();
-            print('Fade out ticker has started. Opacity: $opacity');
           }
         });
       }
