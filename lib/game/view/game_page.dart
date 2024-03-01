@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pducky/game/game.dart';
 import 'package:pducky/l10n/l10n.dart';
 import 'package:pducky/loading/cubit/cubit.dart';
+import 'package:pducky/game/timed_form.dart';
 
 class GamePage extends StatelessWidget {
   const GamePage({super.key});
@@ -52,17 +53,17 @@ class _GameViewState extends State<GameView> {
     bgm = context.read<AudioCubit>().bgm;
     //bgm.play(Assets.audio.background);
     // Check if the app is running on the web
-  if (kIsWeb) {
-    // Code specific to web
-  } else {
-    // Code specific to Android and iOS
-    if (Platform.isAndroid || Platform.isIOS) {
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ]);
+    if (kIsWeb) {
+      // Code specific to web
+    } else {
+      // Code specific to Android and iOS
+      if (Platform.isAndroid || Platform.isIOS) {
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+        ]);
+      }
     }
-  }
   }
 
   @override
@@ -87,11 +88,19 @@ class _GameViewState extends State<GameView> {
               l10n: context.l10n,
               effectPlayer: context.read<AudioCubit>().effectPlayer,
               textStyle: textStyle,
-              
             );
         return Stack(
           children: [
-            Positioned.fill(child: GameWidget(game: _game!)),
+            Positioned.fill(
+                child: GameWidget(
+              game: _game!,
+              overlayBuilderMap: {
+                'DistressForm': (BuildContext context, FlameGame game) {
+                  return DistressForm(gameRef: game as Pducky);
+                  // Use your DistressForm widget here
+                },
+              },
+            )),
             Align(
               alignment: Alignment.topRight,
               child: BlocBuilder<AudioCubit, AudioState>(

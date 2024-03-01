@@ -12,6 +12,15 @@ class UserCubit extends Cubit<UserState> {
     ));
   }
 
+  void updateDistressLevelAndThought(int level, String thought) {
+    emit(UserState(
+      thought: thought,
+      distressLevel: level,
+      sessionDetails: state.sessionDetails,
+    ));
+    print('Updated distress level and thought');
+  }
+
   void addSession(Session session) {
     emit(UserState(
       thought: state.thought,
@@ -33,13 +42,13 @@ class UserState {
 }
 
 class Session {
-  final DateTime date;
+  final DateTime sessionStartTime;
   final int duration;
   final List<int> distressLevels;
   final String thought;
 
   Session(
-      {required this.date,
+      {required this.sessionStartTime,
       required this.duration,
       required this.distressLevels,
       required this.thought});

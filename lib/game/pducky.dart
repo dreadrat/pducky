@@ -6,6 +6,7 @@ import 'package:flutter/painting.dart';
 import 'package:pducky/game/game.dart';
 import 'package:pducky/l10n/l10n.dart';
 import 'package:pducky/game/cubit/gameplay/session_speaking.dart';
+import 'timed_form.dart';
 
 class Pducky extends FlameGame
     with HasCollisionDetection, HasKeyboardHandlerComponents {
@@ -35,6 +36,8 @@ class Pducky extends FlameGame
 
   @override
   Future<void> onLoad() async {
+    // Add the overlay here
+
     final gameSize = size;
     final scoringCubit = ScoringCubit();
     final sessionCubit = SessionCubit(this);
@@ -68,6 +71,7 @@ class Pducky extends FlameGame
     );
     startTime = DateTime.now();
     sessionSpeaking.loadSpeechComponents(sessionCubit, this);
+
     camera = CameraComponent(world: world);
     await addAll([world, camera]);
 

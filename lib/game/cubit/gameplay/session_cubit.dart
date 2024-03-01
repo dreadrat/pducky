@@ -24,14 +24,18 @@ class SessionState {
 
 class SessionCubit extends Cubit<SessionState> {
   final FlameGame gameRef;
+  List<TimedFormComponent> timedFormComponents = [];
+  bool shouldCheckInputComponents = true;
 
   SessionCubit(this.gameRef, {String currentWord = ''})
-      : super(SessionState(elapsedTime: 0, currentWord: currentWord)) {}
-  List<TimedSpeechComponent> timedSpeechComponents = [];
+      : super(SessionState(elapsedTime: 0, currentWord: currentWord)) {
+    // Initialize timedFormComponents here
+    timedFormComponents = [
+      TimedFormComponent(startTime: 10.0, cubit: this),
+    ];
+  }
 
-  final timedFormComponents = [
-    TimedFormComponent(startTime: 5.0),
-  ];
+  List<TimedSpeechComponent> timedSpeechComponents = [];
 
   void updateCurrentWord(String word) {
     emit(state.copyWith(currentWord: word));
@@ -49,13 +53,27 @@ class SessionCubit extends Cubit<SessionState> {
   }
 
   void checkInputComponents() {
+    if (!shouldCheckInputComponents) {
+      return;
+    }
+
     var timedFormComponentsCopy =
         List<TimedFormComponent>.from(timedFormComponents);
     for (var timedFormComponent in timedFormComponentsCopy) {
-      if (state.elapsedTime >= timedFormComponent.startTime) {
+      if (!timedFormComponent.isAdded &&
+          state.elapsedTime >= timedFormComponent.startTime &&
+          state.elapsedTime < timedFormComponent.startTime + 1) {
         print('Matched input components');
-        timedFormComponent.start(this);
-        timedFormComponents.remove(timedFormComponent);
+        gameRef.add(timedFormComponent);
+        timedFormComponent.isAdded = true;
+        print('Added timedFormComponent to game');
+        timedFormComponent.startDistressForm(this);
+        print('Started distress form');
+        shouldCheckInputComponents = false;
+        print('shouldCheckInputComponents is now $shouldCheckInputComponents');
+        return;
+      } else {
+        print('No match: elapsed time is ${state.elapsedTime}');
       }
     }
   }
