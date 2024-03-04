@@ -80,10 +80,11 @@ class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
     position.x = ball.position.x;
 
     // Check if the current time is greater than the timeSeconds of the next word
+
     if (currentIndex < timepoints.length - 1 &&
         audioStartTime != null &&
         DateTime.now().difference(audioStartTime!).inMilliseconds / 1000 >
-            (timepoints[currentIndex + 1]['timeSeconds'] as double)) {
+            (timepoints[currentIndex + 1]['timeSeconds'] as num).toDouble()) {
       // Update the current word and slide it to the left
       currentWord = timepoints[++currentIndex]['word'] as String?;
       wordPosition = -1.0;

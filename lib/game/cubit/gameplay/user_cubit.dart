@@ -13,12 +13,14 @@ class UserCubit extends Cubit<UserState> {
   }
 
   void updateDistressLevelAndThought(int level, String thought) {
-    emit(UserState(
-      thought: thought,
-      distressLevel: level,
-      sessionDetails: state.sessionDetails,
-    ));
-    print('Updated distress level and thought');
+    emit(
+      UserState(
+        thought: thought,
+        distressLevel: level,
+        sessionDetails: state.sessionDetails,
+      ),
+    );
+    print('USER CUBIT: Updated distress level and thought');
   }
 
   void addSession(Session session) {

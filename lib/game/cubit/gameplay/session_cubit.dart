@@ -31,7 +31,7 @@ class SessionCubit extends Cubit<SessionState> {
       : super(SessionState(elapsedTime: 0, currentWord: currentWord)) {
     // Initialize timedFormComponents here
     timedFormComponents = [
-      TimedFormComponent(startTime: 10.0, cubit: this),
+      TimedFormComponent(startTime: 5, cubit: this),
     ];
   }
 
@@ -63,18 +63,14 @@ class SessionCubit extends Cubit<SessionState> {
       if (!timedFormComponent.isAdded &&
           state.elapsedTime >= timedFormComponent.startTime &&
           state.elapsedTime < timedFormComponent.startTime + 1) {
-        print('Matched input components');
+        shouldCheckInputComponents = false;
         gameRef.add(timedFormComponent);
         timedFormComponent.isAdded = true;
-        print('Added timedFormComponent to game');
-        timedFormComponent.startDistressForm(this);
-        print('Started distress form');
-        shouldCheckInputComponents = false;
-        print('shouldCheckInputComponents is now $shouldCheckInputComponents');
-        return;
-      } else {
-        print('No match: elapsed time is ${state.elapsedTime}');
-      }
+
+        if (shouldCheckInputComponents = true) {
+          timedFormComponent.startDistressForm(this);
+        }
+      } else {}
     }
   }
 

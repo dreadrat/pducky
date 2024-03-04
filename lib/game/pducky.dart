@@ -3,6 +3,7 @@ import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/widgets.dart';
 import 'package:pducky/game/game.dart';
 import 'package:pducky/l10n/l10n.dart';
 import 'package:pducky/game/cubit/gameplay/session_speaking.dart';
@@ -24,6 +25,7 @@ class Pducky extends FlameGame
   final AudioPlayer effectPlayer;
 
   final TextStyle textStyle;
+  final FocusNode focusNode = FocusNode();
 
   late final DateTime startTime;
   late Ball puppyDuck;

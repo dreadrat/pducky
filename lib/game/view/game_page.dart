@@ -9,7 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pducky/game/game.dart';
 import 'package:pducky/l10n/l10n.dart';
 import 'package:pducky/loading/cubit/cubit.dart';
-import 'package:pducky/game/timed_form.dart';
+import 'package:pducky/game/distress_form.dart';
 
 class GamePage extends StatelessWidget {
   const GamePage({super.key});
