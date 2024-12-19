@@ -24,7 +24,7 @@ dependencies:
   xml: ^6.5.0
   
 dev_dependencies:
-  bloc_test: ^9.1.5
+  bloc_test: ^9.1.7
   flame_test: ^1.14.0
   flutter_test:
     sdk: flutter
