@@ -17,6 +17,7 @@ class GameplayButtons extends PositionComponent with HasGameRef {
         position: Vector2.zero(),
         side: ButtonSide.Left,
         image: ButtonImage.Puppy,
+        keyHint: 'Z',
         onTap: () {},
       ),
       GameButton(
@@ -24,6 +25,7 @@ class GameplayButtons extends PositionComponent with HasGameRef {
         position: Vector2.zero(),
         side: ButtonSide.Left,
         image: ButtonImage.Duck,
+        keyHint: 'A',
         onTap: () {},
       ),
       GameButton(
@@ -31,6 +33,7 @@ class GameplayButtons extends PositionComponent with HasGameRef {
         position: Vector2.zero(),
         side: ButtonSide.Right,
         image: ButtonImage.Duck,
+        keyHint: 'K',
         onTap: () {},
       ),
       GameButton(
@@ -38,6 +41,7 @@ class GameplayButtons extends PositionComponent with HasGameRef {
         position: Vector2.zero(),
         side: ButtonSide.Right,
         image: ButtonImage.Puppy,
+        keyHint: 'M',
         onTap: () {},
       ),
       PauseButtonComponent()

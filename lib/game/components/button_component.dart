@@ -2,8 +2,10 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pducky/game/cubit/cubit.dart';
+import 'package:pducky/game/pducky.dart';
 
 enum ButtonSide { Left, Right, Center }
 
@@ -17,6 +19,7 @@ class GameButton extends PositionedEntity
     required this.image,
     required this.onTap,
     required this.scoringCubit,
+    this.keyHint,
   }) : super(
           anchor: Anchor.center,
           size: Vector2.all(0),
@@ -26,14 +29,45 @@ class GameButton extends PositionedEntity
   ButtonImage image;
   final VoidCallback onTap;
   final ScoringCubit scoringCubit;
+  final String? keyHint;
 
   late SpriteComponent _spriteComponent;
   SpriteComponent get spriteComponent => _spriteComponent;
+
+  TextComponent? _keyHintComponent;
+  bool _keyHintAdded = false;
 
   @override
   Future<void> onLoad() async {
     buttonLayouts();
     await addButtonImage();
+    _createKeyHint();
+  }
+
+  void _createKeyHint() {
+    if (keyHint == null) return;
+
+    _keyHintComponent = TextComponent(
+      text: keyHint,
+      anchor: Anchor.topCenter,
+    );
+
+    _layoutKeyHint();
+  }
+
+  void _layoutKeyHint() {
+    if (_keyHintComponent == null) return;
+
+    // Position just under the button sprite.
+    _keyHintComponent!
+      ..position = Vector2(size.x / 2, size.y + (size.y * 0.05))
+      ..textRenderer = TextPaint(
+        style: const TextStyle(
+          color: Color(0xFFFFFFFF),
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+        ),
+      );
   }
 
   @override
@@ -41,6 +75,7 @@ class GameButton extends PositionedEntity
     super.onGameResize(gameSize);
     size.setValues(gameRef.size.y * 0.1, gameRef.size.y * 0.1);
     buttonLayouts();
+    _layoutKeyHint();
   }
 
   Future<void> addButtonImage() async {
@@ -108,11 +143,31 @@ class GameButton extends PositionedEntity
   }
 
   @override
+  void update(double dt) {
+    super.update(dt);
+
+    final shouldShow = (gameRef is Pducky) && (gameRef as Pducky).showKeyHints;
+
+    if (_keyHintComponent != null && shouldShow && !_keyHintAdded) {
+      add(_keyHintComponent!);
+      _keyHintAdded = true;
+    } else if (_keyHintComponent != null && !shouldShow && _keyHintAdded) {
+      remove(_keyHintComponent!);
+      _keyHintAdded = false;
+    }
+  }
+
+  @override
   bool onKeyEvent(
     KeyEvent event,
     Set<LogicalKeyboardKey> keysPressed,
   ) {
     final isKeyDown = event is KeyDownEvent;
+
+    // If we ever receive key events, a keyboard is available; show hints.
+    if (gameRef is Pducky) {
+      (gameRef as Pducky).enableKeyHints();
+    }
 
     final isAKey = keysPressed.contains(LogicalKeyboardKey.keyA);
     final isZKey = keysPressed.contains(LogicalKeyboardKey.keyZ);

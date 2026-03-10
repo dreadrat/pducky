@@ -3,6 +3,7 @@ import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pducky/game/game.dart';
 import 'package:pducky/l10n/l10n.dart';
@@ -18,6 +19,16 @@ class Pducky extends FlameGame
   }) {
     images.prefix = '';
     debugMode = false;
+  }
+
+  /// Whether to show keyboard hint labels under the on-screen buttons.
+  ///
+  /// On web we default to showing them. On mobile, we can switch this on after
+  /// the first detected key event.
+  bool showKeyHints = kIsWeb;
+
+  void enableKeyHints() {
+    showKeyHints = true;
   }
 
   final AppLocalizations l10n;
