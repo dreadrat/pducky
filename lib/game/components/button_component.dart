@@ -26,7 +26,6 @@ class GameButton extends PositionedEntity
   ButtonImage image;
   final VoidCallback onTap;
   final ScoringCubit scoringCubit;
-  final positionType = PositionType.game;
 
   late SpriteComponent _spriteComponent;
   SpriteComponent get spriteComponent => _spriteComponent;
@@ -110,10 +109,10 @@ class GameButton extends PositionedEntity
 
   @override
   bool onKeyEvent(
-    RawKeyEvent event,
+    KeyEvent event,
     Set<LogicalKeyboardKey> keysPressed,
   ) {
-    final isKeyDown = event is RawKeyDownEvent;
+    final isKeyDown = event is KeyDownEvent;
 
     final isAKey = keysPressed.contains(LogicalKeyboardKey.keyA);
     final isZKey = keysPressed.contains(LogicalKeyboardKey.keyZ);
