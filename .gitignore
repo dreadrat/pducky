@@ -86,6 +86,10 @@ unlinked_spec.ds
 # Coverage
 coverage/
 
+# Local secrets (do not commit)
+secrets/
+*.secrets.json
+
 # Submodules
 packages/**/pubspec.lock
 

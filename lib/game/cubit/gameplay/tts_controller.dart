@@ -3,11 +3,11 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
-import 'dart:convert';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flame_audio/flame_audio.dart';
+import 'package:pducky/tts/tts_config.dart';
 
-//Converting the text input to audio and SSML markup with timestamps
+// Converting the text input to audio and SSML markup with timestamps
 
 StreamController<String> wordStreamController = StreamController<String>();
 AudioPlayer audioPlayer = AudioPlayer();
@@ -32,9 +32,16 @@ Future<Map<String, dynamic>> convertTextToSpeechAndSave(String text) async {
 
   // Define the API endpoint and headers
   String url = "https://texttospeech.googleapis.com/v1beta1/text:synthesize";
+  if (!hasGoogleTtsApiKey) {
+    throw StateError(
+      'Missing GOOGLE_TTS_API_KEY. Provide it via --dart-define or '
+      '--dart-define-from-file (see lib/tts/tts_config.dart).',
+    );
+  }
+
   Map<String, String> headers = {
-    "Content-Type": "application/json",
-    "X-Goog-Api-Key": "AIzaSyDOzl4unLKCAoDT1f5nlVfCmzXejDHWDnE",
+    'Content-Type': 'application/json',
+    'X-Goog-Api-Key': googleTtsApiKey,
   };
 
   // Define the body of the request
