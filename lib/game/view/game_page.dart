@@ -46,6 +46,7 @@ class _GameViewState extends State<GameView> {
   FlameGame? _game;
 
   late final Bgm bgm;
+  final FocusNode _gameFocusNode = FocusNode(debugLabel: 'pducky-game');
 
   @override
   void initState() {
@@ -69,6 +70,7 @@ class _GameViewState extends State<GameView> {
   @override
   void dispose() {
     bgm.pause();
+    _gameFocusNode.dispose();
     super.dispose();
   }
 
@@ -92,15 +94,24 @@ class _GameViewState extends State<GameView> {
         return Stack(
           children: [
             Positioned.fill(
-                child: GameWidget(
-              game: _game!,
-              overlayBuilderMap: {
-                'DistressForm': (BuildContext context, FlameGame game) {
-                  return DistressForm(gameRef: game as Pducky);
-                  // Use your DistressForm widget here
+              child: GameWidget(
+                game: _game!,
+                focusNode: _gameFocusNode,
+                autofocus: true,
+                overlayBuilderMap: {
+                  'DistressForm': (BuildContext context, FlameGame game) {
+                    return DistressForm(
+                      gameRef: game as Pducky,
+                      onDismiss: () {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          _gameFocusNode.requestFocus();
+                        });
+                      },
+                    );
+                  },
                 },
-              },
-            )),
+              ),
+            ),
             Align(
               alignment: Alignment.topRight,
               child: BlocBuilder<AudioCubit, AudioState>(

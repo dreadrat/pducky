@@ -3,12 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pducky/game/game.dart';
 
 class DistressForm extends StatefulWidget {
-  final Pducky gameRef;
+  const DistressForm({
+    required this.gameRef,
+    required this.onDismiss,
+    super.key,
+  });
 
-  DistressForm({required this.gameRef});
+  final Pducky gameRef;
+  final VoidCallback onDismiss;
 
   @override
-  _DistressFormState createState() => _DistressFormState();
+  State<DistressForm> createState() => _DistressFormState();
 }
 
 class _DistressFormState extends State<DistressForm> {
@@ -16,6 +21,13 @@ class _DistressFormState extends State<DistressForm> {
   final _negativeThoughtController = TextEditingController();
   double _distressLevel = 1;
   final _pageController = PageController();
+
+  @override
+  void dispose() {
+    _negativeThoughtController.dispose();
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,18 +115,16 @@ class _DistressFormState extends State<DistressForm> {
                         );
                     print('Distress level: $_distressLevel');
                     print('Thought: ${_negativeThoughtController.text}');
-                    print(
-                        'Before Butotn Press Focus: ${FocusManager.instance.primaryFocus}');
-                    print('Removing DistressForm overlay');
-                    await Future.delayed(
-                        Duration(milliseconds: 100)); // Wait a bit
+                    // TextField focus steals keyboard events; explicitly return
+                    // focus to the GameWidget after dismissing the overlay.
+                    FocusManager.instance.primaryFocus?.unfocus();
+
+                    // Small delay gives the overlay removal time to settle.
+                    await Future.delayed(const Duration(milliseconds: 50));
                     widget.gameRef.overlays.remove('DistressForm');
 
-                    print(
-                        'After Button press Current Focus: ${FocusManager.instance.primaryFocus}');
-
-                    print('Resuming game engine');
                     widget.gameRef.resumeEngine();
+                    widget.onDismiss();
                   },
                   child: Text('Start the session!'),
                 ),
