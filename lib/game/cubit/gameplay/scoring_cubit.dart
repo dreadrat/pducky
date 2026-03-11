@@ -14,6 +14,17 @@ enum BallImage {
 class ScoringCubit extends Cubit<ScoringState> {
   ScoringCubit() : super(initialState);
 
+  // Early ramp-up tuning
+  static const int _fastRampSpeedUpsMax = 5;
+  static const double _fastRampDeltaMs = 300;
+  static const double _normalDeltaMs = 200;
+  static const int _fastRampBlockSize = 5; // every 5 streak
+  static const int _fastRampMaxErrorsPerBlock = 1; // 2 errors disables fast ramp
+
+  int _fastRampSpeedUpsDone = 0;
+  int _errorsInCurrentBlock = 0;
+  bool _useFastRamp = true;
+
   static ScoringState initialState = const ScoringState(
     ballImage: BallImage.Puppy,
     ballIsInScoringZone: false,
@@ -66,15 +77,40 @@ class ScoringCubit extends Cubit<ScoringState> {
   void increaseStreak() {
     final newStreak = state.streak + 1;
 
-    // If the new streak score is a multiple of 10, speed up the game
-    if (newStreak % 10 == 0) {
-      speedUpGame();
+    // Fast ramp: every 5 streak, speed up by 300ms for the first 5 speed-ups.
+    // If the player makes 2+ errors within a 5-streak block, fall back to the
+    // normal algorithm.
+    if (_useFastRamp && _fastRampSpeedUpsDone < _fastRampSpeedUpsMax) {
+      if (newStreak % _fastRampBlockSize == 0) {
+        final tooManyErrors =
+            _errorsInCurrentBlock > _fastRampMaxErrorsPerBlock;
+
+        if (tooManyErrors) {
+          _useFastRamp = false;
+        } else {
+          _fastRampSpeedUpsDone++;
+          _speedUpBy(_fastRampDeltaMs);
+        }
+
+        _errorsInCurrentBlock = 0;
+      }
+    }
+
+    // Normal algorithm (used after fast ramp, or if fast ramp disabled).
+    if (!_useFastRamp || _fastRampSpeedUpsDone >= _fastRampSpeedUpsMax) {
+      if (newStreak % 10 == 0) {
+        speedUpGame();
+      }
     }
 
     emit(state.copyWith(streak: newStreak));
   }
 
   void wrongTap() {
+    if (_useFastRamp && _fastRampSpeedUpsDone < _fastRampSpeedUpsMax) {
+      _errorsInCurrentBlock++;
+    }
+
     emit(
       state.copyWith(
         hasTapped: true,
@@ -85,23 +121,30 @@ class ScoringCubit extends Cubit<ScoringState> {
     resetStreak();
   }
 
-  void speedUpGame() {
-    final newSpeed = state.speed - 200;
+  void _speedUpBy(double deltaMs) {
+    final newSpeed = state.speed - deltaMs;
     FlameAudio.play('speedup.mp3');
     emit(state.copyWith(speed: newSpeed));
   }
 
+  void speedUpGame() {
+    _speedUpBy(_normalDeltaMs);
+  }
+
   void slowDownGame() {
-    final newSpeed = state.speed + 200;
+    final newSpeed = state.speed + _normalDeltaMs;
     FlameAudio.play('slowdown.mp3', volume: 0.5);
     emit(state.copyWith(speed: newSpeed));
   }
 
   void increaseMissedTaps() {
+    if (_useFastRamp && _fastRampSpeedUpsDone < _fastRampSpeedUpsMax) {
+      _errorsInCurrentBlock++;
+    }
+
     final newMissStreak = state.missStreak + 1;
     emit(state.copyWith(missStreak: newMissStreak));
     if (newMissStreak % 5 == 0) {
-      // Add parentheses around the condition
       slowDownGame();
     }
   }
@@ -123,6 +166,12 @@ class ScoringCubit extends Cubit<ScoringState> {
 
   void resetStreak() {
     emit(state.copyWith(streak: 0));
+  }
+
+  void clearPendingScoreSound() {
+    if (state.pendingScoreSoundDirection != null) {
+      emit(state.copyWith(pendingScoreSoundDirection: null));
+    }
   }
 
   MovementDirection? consumePendingScoreSoundDirection() {

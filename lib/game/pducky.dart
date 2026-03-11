@@ -41,6 +41,7 @@ class Pducky extends FlameGame
   late final DateTime startTime;
   late Ball puppyDuck;
   late GameplayButtons gameplayButtons;
+  late final ScoringCubit scoringCubit;
 
   void showPauseMenu() {
     overlays.add('PauseMenu');
@@ -64,7 +65,7 @@ class Pducky extends FlameGame
     // Add the overlay here
 
     final gameSize = size;
-    final scoringCubit = ScoringCubit();
+    scoringCubit = ScoringCubit();
     final sessionCubit = SessionCubit(this);
     final sessionSpeaking = SessionSpeaking();
 

@@ -50,6 +50,8 @@ class PauseButtonBehavior extends Behavior
       gameRef.hidePauseMenu();
       gameRef.resumeEngine();
     } else {
+      // Clear any pending delayed success sound so it doesn't fire after resume.
+      gameRef.scoringCubit.clearPendingScoreSound();
       gameRef.pauseEngine();
       gameRef.showPauseMenu();
     }
