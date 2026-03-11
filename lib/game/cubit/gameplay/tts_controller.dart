@@ -1,10 +1,11 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flame_audio/flame_audio.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pducky/tts/google_tts_generator.dart';
 import 'package:pducky/tts/tts_config.dart';
 
 // Converting the text input to audio and SSML markup with timestamps
@@ -16,22 +17,6 @@ Future<Map<String, dynamic>> convertTextToSpeechAndSave(String text) async {
   print('Starting to convert text to speech');
   print('$text');
 
-  // Function to convert text to SSML with marks
-  String textToSSMLWithMarks(String text) {
-    final words = text.split(' ');
-    final ssmlWords = words.asMap().entries.map((entry) {
-      final markName = 'mark${entry.key}';
-      return "<mark name='$markName'/>${entry.value}";
-    }).join(' ');
-
-    return "<speak>$ssmlWords</speak>";
-  }
-
-  String ssml = textToSSMLWithMarks(text);
-  print('SSML markup: $ssml');
-
-  // Define the API endpoint and headers
-  String url = "https://texttospeech.googleapis.com/v1beta1/text:synthesize";
   if (!hasGoogleTtsApiKey) {
     throw StateError(
       'Missing GOOGLE_TTS_API_KEY. Provide it via --dart-define or '
@@ -39,70 +24,29 @@ Future<Map<String, dynamic>> convertTextToSpeechAndSave(String text) async {
     );
   }
 
-  Map<String, String> headers = {
-    'Content-Type': 'application/json',
-    'X-Goog-Api-Key': googleTtsApiKey,
-  };
-
-  // Define the body of the request
-  Map<String, dynamic> body = {
-    "audioConfig": {
-      "audioEncoding": "MP3",
-      "effectsProfileId": ["small-bluetooth-speaker-class-device"],
-      "pitch": -8.2,
-      "speakingRate": 0.8
-    },
-    "input": {"ssml": ssml},
-    "voice": {"languageCode": "en-AU", "name": "en-AU-Standard-D"},
-    "enableTimePointing": ["SSML_MARK"]
-  };
-
-  print('Making POST request to $url');
-  // Make a POST request to the API
-  http.Response response = await http.post(
-    Uri.parse(url),
-    headers: headers,
-    body: jsonEncode(body), // Encode the body to JSON
+  final generated = await googleSynthesizeWithTimepoints(
+    apiKey: googleTtsApiKey,
+    text: text,
   );
 
-// Handle the
-  print('Response body: ${response.body}');
-  Map<String, dynamic> jsonData =
-      jsonDecode(response.body) as Map<String, dynamic>;
-  print('Successfully received response');
-
-  String audioContent = jsonData['audioContent'] as String;
-
-  print('Content extracted successfully');
-
-  List<int> audioBytes = base64Decode(audioContent);
-
-  print('Base64 Decoded');
-
-// Extract the timepoints from the response
-  List<dynamic> timepoints = jsonData['timepoints'] as List<dynamic>;
-  List<String> words = text.split(' ');
-
-// Add the word to each timepoint
-  for (int i = 0; i < timepoints.length; i++) {
-    timepoints[i]['word'] = words[i];
-  }
-
-  print('Timepoints: $timepoints');
+  final ssml = generated.ssml;
+  final audioBytes = generated.mp3Bytes;
+  final timepoints = generated.timepoints;
 
 // Get the path of the directory where you want to save the file
-  Directory docDir = await getApplicationDocumentsDirectory();
-  String dirPath = '${docDir.path}\\speech_outputs';
-  await Directory(dirPath)
-      .create(recursive: true); // Ensure the directory exists
+  final docDir = await getApplicationDocumentsDirectory();
+  final dirPath = '${docDir.path}${Platform.pathSeparator}speech_outputs';
+  await Directory(dirPath).create(recursive: true);
 
   /// Sanitize the filename
-  String sanitizedText = sanitizeFilename(text);
-  String audioFilePath = '$dirPath/$sanitizedText.mp3'.replaceAll('/', '\\');
-  String ssmlFilePath = '$dirPath/$sanitizedText.ssml'.replaceAll('/', '\\');
+  final sanitizedText = sanitizeFilename(text);
+  final audioFilePath = '$dirPath${Platform.pathSeparator}$sanitizedText.mp3';
+  final ssmlFilePath = '$dirPath${Platform.pathSeparator}$sanitizedText.ssml';
+  final jsonFilePath = '$dirPath${Platform.pathSeparator}$sanitizedText.json';
 
   print('Audio file path set to: $audioFilePath');
   print('SSML file path set to: $ssmlFilePath');
+  print('JSON file path set to: $jsonFilePath');
 
   // Create a new file at the desired path for the audio
   File audioFile = File(audioFilePath);
@@ -114,13 +58,18 @@ Future<Map<String, dynamic>> convertTextToSpeechAndSave(String text) async {
   // Create a new file at the desired path for the SSML
   File ssmlFile = File(ssmlFilePath);
 
-  // Write the SSML markup and the timepoints to the file
-  await ssmlFile
-      .writeAsString('$ssml\n\nTimepoints: ${jsonEncode(timepoints)}');
-  print('SSML file and timepoints written successfully');
+  // Write the SSML markup to the file
+  await ssmlFile.writeAsString(ssml);
+
+  // Write timepoints to a dedicated JSON file (same format SpeechComponent uses)
+  final jsonFile = File(jsonFilePath);
+  await jsonFile.writeAsString(jsonEncode(timepoints));
+
+  print('Speech files written successfully');
   return {
     'timepoints': timepoints,
     'audioFilePath': audioFilePath,
+    'jsonFilePath': jsonFilePath,
   };
 }
 
@@ -133,11 +82,11 @@ Future<List<Map<String, dynamic>>> speakAndPlay(
 
   // Get the path of the directory where you're saving the file in the `speakMe` function
   Directory docDir = await getApplicationDocumentsDirectory();
-  String dirPath = '${docDir.path}\\speech_outputs';
+  final dirPath = '${docDir.path}${Platform.pathSeparator}speech_outputs';
 
   // Sanitize the filename
-  String sanitizedText = sanitizeFilename(text);
-  String filePath = '$dirPath/$sanitizedText.mp3'.replaceAll('/', '\\');
+  final sanitizedText = sanitizeFilename(text);
+  final filePath = '$dirPath${Platform.pathSeparator}$sanitizedText.mp3';
 
   File audioFile = File(filePath);
 
@@ -145,31 +94,32 @@ Future<List<Map<String, dynamic>>> speakAndPlay(
   if (await audioFile.exists()) {
     print('File already exists, playing existing file');
 
-    // Read the SSML content from the existing file
-    String ssmlFilePath = '$dirPath/$sanitizedText.ssml'.replaceAll('/', '\\');
-    File ssmlFile = File(ssmlFilePath);
-    String ssmlContent = await ssmlFile.readAsString();
+    final jsonFilePath = '$dirPath${Platform.pathSeparator}$sanitizedText.json';
 
-    print('SSML content: $ssmlContent'); // Log the SSML content
+    List<Map<String, dynamic>> timepoints;
+    final jsonFile = File(jsonFilePath);
+    if (await jsonFile.exists()) {
+      final content = await jsonFile.readAsString();
+      timepoints = List<Map<String, dynamic>>.from(
+        jsonDecode(content) as List<dynamic>,
+      );
+    } else {
+      // Fallback for older outputs that embedded timepoints inside the .ssml file
+      final ssmlFilePath =
+          '$dirPath${Platform.pathSeparator}$sanitizedText.ssml';
+      final ssmlContent = await File(ssmlFilePath).readAsString();
 
-    // Extract the timepoints content from the SSML content
-    List<String> splitContent = ssmlContent.split('Timepoints: ');
-    if (splitContent.length < 2) {
-      print('No timepoints found in the SSML content');
+      final timepointsRegExp = RegExp(r'Timepoints: (\[.*\])');
+      final timepointsMatch = timepointsRegExp.firstMatch(ssmlContent);
+      final timepointsContent =
+          timepointsMatch != null ? timepointsMatch.group(1)! : '';
+
+      timepoints = timepointsContent.isNotEmpty
+          ? List<Map<String, dynamic>>.from(
+              jsonDecode(timepointsContent) as List<dynamic>,
+            )
+          : [];
     }
-
-    RegExp timepointsRegExp = RegExp(r'Timepoints: (\[.*\])');
-    Match? timepointsMatch = timepointsRegExp.firstMatch(ssmlContent);
-    String timepointsContent =
-        timepointsMatch != null ? timepointsMatch.group(1)! : '';
-
-    print('Timepoints content: $timepointsContent');
-
-    // Extract the timepoints from the SSML content and the timepoints content
-    List<Map<String, dynamic>> timepoints = timepointsContent.isNotEmpty
-        ? List<Map<String, dynamic>>.from(
-            jsonDecode(timepointsContent) as List<dynamic>)
-        : [];
 
     result = {
       'audioFilePath': filePath,
