@@ -34,6 +34,8 @@ class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
   double wordPosition = 0.0;
   double opacity = 1.0;
   Ticker? fadeOutTicker;
+  bool _endScheduled = false;
+  bool _ended = false;
 
   void start() {
     sessionCubit.setSpeaking(true);
@@ -73,6 +75,19 @@ class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
   void update(double dt) {
     super.update(dt);
 
+    // Backstop: once we've passed the final timepoint, end speech.
+    if (!_ended && _endScheduled && audioStartTime != null && timepoints.isNotEmpty) {
+      final elapsedSeconds =
+          DateTime.now().difference(audioStartTime!).inMilliseconds / 1000.0;
+      final lastTime = (timepoints.last['timeSeconds'] as num).toDouble();
+      if (elapsedSeconds >= lastTime + 0.4) {
+        _ended = true;
+        sessionCubit.setSpeaking(false);
+        // Clear the guided word so the thought can show between lines.
+        sessionCubit.updateCurrentWord('');
+      }
+    }
+
     // Access the Ball instance
     PositionComponent ball = gameRef.puppyDuck;
 
@@ -93,20 +108,12 @@ class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
       // Get the SessionCubit instance and update the currentWord
       sessionCubit.updateCurrentWord(currentWord!);
 
-      // If this is the final word, fade it out and then mark speech as done.
+      // If this is the final word, schedule an end-of-speech signal.
+      //
+      // We use an absolute time check in update() as a backstop, because relying
+      // only on a fade-out ticker can leave isSpeaking stuck true.
       if (currentIndex == timepoints.length - 1) {
-        Future.delayed(const Duration(seconds: 1), () {
-          if (fadeOutTicker == null) {
-            fadeOutTicker = Ticker((Duration duration) {
-              opacity = 1.0 - duration.inMilliseconds / 250.0;
-              if (opacity <= 0) {
-                fadeOutTicker!.stop();
-                sessionCubit.setSpeaking(false);
-              }
-            });
-            fadeOutTicker!.start();
-          }
-        });
+        _endScheduled = true;
       }
     }
   }
