@@ -123,6 +123,9 @@ class _DistressFormState extends State<DistressForm> {
                     await Future.delayed(const Duration(milliseconds: 50));
                     widget.gameRef.overlays.remove('DistressForm');
 
+                    widget.gameRef.startRoundWithThought(
+                      _negativeThoughtController.text,
+                    );
                     widget.gameRef.resumeEngine();
                     widget.onDismiss();
                   },

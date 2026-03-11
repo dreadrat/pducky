@@ -42,6 +42,14 @@ class Pducky extends FlameGame
   late Ball puppyDuck;
   late GameplayButtons gameplayButtons;
   late final ScoringCubit scoringCubit;
+  late final SessionCubit sessionCubit;
+  late final SessionSpeaking sessionSpeaking;
+
+  void startRoundWithThought(String thought) {
+    sessionCubit.resetTime();
+    sessionCubit.updateThought(thought);
+    sessionSpeaking.loadSpeechComponents(sessionCubit, this);
+  }
 
   void showPauseMenu() {
     overlays.add('PauseMenu');
@@ -66,8 +74,8 @@ class Pducky extends FlameGame
 
     final gameSize = size;
     scoringCubit = ScoringCubit();
-    final sessionCubit = SessionCubit(this);
-    final sessionSpeaking = SessionSpeaking();
+    sessionCubit = SessionCubit(this);
+    sessionSpeaking = SessionSpeaking();
 
     final world = World(
       children: [
@@ -96,7 +104,7 @@ class Pducky extends FlameGame
       ],
     );
     startTime = DateTime.now();
-    sessionSpeaking.loadSpeechComponents(sessionCubit, this);
+    // Speech / round script is loaded after the user sets their thought.
 
     camera = CameraComponent(world: world);
     await addAll([world, camera]);

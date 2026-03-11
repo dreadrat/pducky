@@ -4,20 +4,29 @@ import 'package:pducky/game/cubit/gameplay/session_speaking.dart';
 import 'package:pducky/game/timed_form.dart';
 
 class SessionState {
-  SessionState(
-      {required this.elapsedTime,
-      this.currentWord = '',
-      this.isPaused = false});
+  SessionState({
+    required this.elapsedTime,
+    this.currentWord = '',
+    this.isPaused = false,
+    this.thought = '',
+  });
 
   final double elapsedTime;
   final String currentWord;
   final bool isPaused;
+  final String thought;
 
-  SessionState copyWith({String? currentWord, bool? isPaused}) {
+  SessionState copyWith({
+    String? currentWord,
+    bool? isPaused,
+    String? thought,
+    double? elapsedTime,
+  }) {
     return SessionState(
-      elapsedTime: elapsedTime,
+      elapsedTime: elapsedTime ?? this.elapsedTime,
       currentWord: currentWord ?? this.currentWord,
       isPaused: isPaused ?? this.isPaused,
+      thought: thought ?? this.thought,
     );
   }
 }
@@ -28,7 +37,7 @@ class SessionCubit extends Cubit<SessionState> {
   bool shouldCheckInputComponents = true;
 
   SessionCubit(this.gameRef, {String currentWord = ''})
-      : super(SessionState(elapsedTime: 0, currentWord: currentWord)) {
+      : super(SessionState(elapsedTime: 0, currentWord: currentWord, thought: '')) {
     // Initialize timedFormComponents here
     timedFormComponents = [
       TimedFormComponent(startTime: 5, cubit: this),
@@ -37,9 +46,14 @@ class SessionCubit extends Cubit<SessionState> {
 
   List<TimedSpeechComponent> timedSpeechComponents = [];
   List<TimedCueComponent> timedCueComponents = [];
+  List<TimedLocalSpeech> timedLocalSpeech = [];
 
   void updateCurrentWord(String word) {
     emit(state.copyWith(currentWord: word));
+  }
+
+  void updateThought(String thought) {
+    emit(state.copyWith(thought: thought));
   }
 
   void checkSpeechComponents() {
@@ -60,6 +74,16 @@ class SessionCubit extends Cubit<SessionState> {
       if (state.elapsedTime >= timedCueComponent.startTime) {
         timedCueComponent.cueComponent.start();
         timedCueComponents.remove(timedCueComponent);
+      }
+    }
+  }
+
+  void checkLocalSpeechComponents() {
+    final timedLocalSpeechCopy = List<TimedLocalSpeech>.from(timedLocalSpeech);
+    for (final timed in timedLocalSpeechCopy) {
+      if (state.elapsedTime >= timed.startTime) {
+        timed.component.start();
+        timedLocalSpeech.remove(timed);
       }
     }
   }
@@ -92,12 +116,13 @@ class SessionCubit extends Cubit<SessionState> {
       emit(SessionState(elapsedTime: newTime));
       checkSpeechComponents();
       checkCueComponents();
+      checkLocalSpeechComponents();
       checkInputComponents();
     }
   }
 
   void resetTime() {
-    emit(SessionState(elapsedTime: 0));
+    emit(state.copyWith(elapsedTime: 0));
   }
 
   void pauseGame() {

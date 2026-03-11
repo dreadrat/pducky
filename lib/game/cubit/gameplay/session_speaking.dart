@@ -27,6 +27,16 @@ class TimedCueComponent {
   });
 }
 
+class TimedLocalSpeech {
+  final LocalSpeechComponent component;
+  final int startTime;
+
+  TimedLocalSpeech({
+    required this.component,
+    required this.startTime,
+  });
+}
+
 class SessionSpeaking {
   void loadSpeechComponents(SessionCubit sessionCubit, Pducky game) {
     sessionCubit.timedSpeechComponents = [
@@ -85,99 +95,67 @@ class SessionSpeaking {
       ),
       // Add more TimedSpeechComponents as needed
     ];
-    // 10-minute round prototype: text-only cues during play.
-    // These are deliberately short so they fit under the ball.
-    sessionCubit.timedCueComponents = [
-      // Non-judgement + grounding
-      TimedCueComponent(
-        cueComponent: CueComponent(
+    // 10-minute round prototype: spoken prompts that explicitly reference the
+    // user's thought. These are generated locally (TTS) and synced word-by-word.
+    final t = sessionCubit.state.thought.trim();
+    final thoughtLine = t.isEmpty ? 'your thought' : 'the thought: “$t”';
+
+    sessionCubit.timedLocalSpeech = [
+      TimedLocalSpeech(
+        component: LocalSpeechComponent(
           sessionCubit: sessionCubit,
-          text: 'No judgment',
+          text: "Alright. For the next few minutes, we’re not judging it. Just notice $thoughtLine.",
         ),
-        startTime: 60,
+        startTime: 10,
       ),
-      TimedCueComponent(
-        cueComponent: CueComponent(
+      TimedLocalSpeech(
+        component: LocalSpeechComponent(
           sessionCubit: sessionCubit,
-          text: 'Thought ≠ fact',
+          text: "As you play, keep $thoughtLine lightly in mind. You don’t have to fix it.",
+        ),
+        startTime: 35,
+      ),
+      TimedLocalSpeech(
+        component: LocalSpeechComponent(
+          sessionCubit: sessionCubit,
+          text: "Quick check-in: where do you feel $thoughtLine in your body right now?",
         ),
         startTime: 90,
       ),
-      TimedCueComponent(
-        cueComponent: CueComponent(
+      TimedLocalSpeech(
+        component: LocalSpeechComponent(
           sessionCubit: sessionCubit,
-          text: 'Where in body?',
+          text: "See if you can name the feeling that comes with it. Just one word is enough.",
         ),
-        startTime: 120,
+        startTime: 135,
       ),
-      TimedCueComponent(
-        cueComponent: CueComponent(
+      TimedLocalSpeech(
+        component: LocalSpeechComponent(
           sessionCubit: sessionCubit,
-          text: 'Name the feeling',
-        ),
-        startTime: 150,
-      ),
-      TimedCueComponent(
-        cueComponent: CueComponent(
-          sessionCubit: sessionCubit,
-          text: "I'm having the thought…",
-          displaySeconds: 2.5,
+          text: "Try this: ‘I’m having the thought that…’ and then add it on the end.",
         ),
         startTime: 180,
       ),
-      TimedCueComponent(
-        cueComponent: CueComponent(
+      TimedLocalSpeech(
+        component: LocalSpeechComponent(
           sessionCubit: sessionCubit,
-          text: 'Let it be here',
+          text: "Now let it be there, and bring your attention back to the ball. Thought… body… ball.",
         ),
-        startTime: 210,
+        startTime: 240,
       ),
-      // Mid-round perspective + compassion
-      TimedCueComponent(
-        cueComponent: CueComponent(
+      TimedLocalSpeech(
+        component: LocalSpeechComponent(
           sessionCubit: sessionCubit,
-          text: 'What would you tell a friend?',
-          displaySeconds: 3,
+          text: "If a friend had $thoughtLine, what would you say to them? Keep it gentle.",
         ),
-        startTime: 270,
+        startTime: 330,
       ),
-      TimedCueComponent(
-        cueComponent: CueComponent(
+      TimedLocalSpeech(
+        component: LocalSpeechComponent(
           sessionCubit: sessionCubit,
-          text: 'Back to the ball',
+          text: "One last check. Notice what’s changed, even a little. Then take a slow breath.",
         ),
-        startTime: 300,
-      ),
-      TimedCueComponent(
-        cueComponent: CueComponent(
-          sessionCubit: sessionCubit,
-          text: 'One small next step',
-          displaySeconds: 2.5,
-        ),
-        startTime: 360,
-      ),
-      TimedCueComponent(
-        cueComponent: CueComponent(
-          sessionCubit: sessionCubit,
-          text: 'Be kind to yourself',
-        ),
-        startTime: 420,
-      ),
-      // End-of-round wrap
-      TimedCueComponent(
-        cueComponent: CueComponent(
-          sessionCubit: sessionCubit,
-          text: 'Notice what changed',
-          displaySeconds: 2.5,
-        ),
-        startTime: 540,
-      ),
-      TimedCueComponent(
-        cueComponent: CueComponent(
-          sessionCubit: sessionCubit,
-          text: 'Take a breath',
-        ),
-        startTime: 585,
+        startTime: 560,
       ),
     ];
 
@@ -189,6 +167,11 @@ class SessionSpeaking {
     // Add cue components to the game
     for (final timedCueComponent in sessionCubit.timedCueComponents) {
       sessionCubit.gameRef.add(timedCueComponent.cueComponent);
+    }
+
+    // Add local TTS speech components to the game
+    for (final timed in sessionCubit.timedLocalSpeech) {
+      sessionCubit.gameRef.add(timed.component);
     }
   }
 }
