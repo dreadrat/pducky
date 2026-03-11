@@ -49,17 +49,15 @@ class Pducky extends FlameGame
     sessionCubit.resetTime();
     sessionCubit.updateThought(thought);
 
+    // Guided round normally begins at 60s (after intro). If skipping intro, the
+    // guided round begins immediately at t=0.
+    sessionCubit.setRoundStartSeconds(skipIntro ? 0 : 60);
+
     sessionSpeaking.loadSpeechComponents(
       sessionCubit,
       this,
       skipIntro: skipIntro,
     );
-
-    // If skipping intro, jump the timer to the guided round start.
-    if (skipIntro) {
-      // Guided round starts at 60s (see schedule + UI behaviour).
-      sessionCubit.setElapsedTime(60);
-    }
   }
 
   void showPauseMenu() {

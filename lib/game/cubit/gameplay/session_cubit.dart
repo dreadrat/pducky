@@ -10,6 +10,7 @@ class SessionState {
     this.isPaused = false,
     this.thought = '',
     this.isSpeaking = false,
+    this.roundStartSeconds = 60,
   });
 
   final double elapsedTime;
@@ -20,12 +21,16 @@ class SessionState {
   /// True while a SpeechComponent is actively driving word-by-word guidance.
   final bool isSpeaking;
 
+  /// When the guided round begins (seconds since session start).
+  final double roundStartSeconds;
+
   SessionState copyWith({
     String? currentWord,
     bool? isPaused,
     String? thought,
     double? elapsedTime,
     bool? isSpeaking,
+    double? roundStartSeconds,
   }) {
     return SessionState(
       elapsedTime: elapsedTime ?? this.elapsedTime,
@@ -33,6 +38,7 @@ class SessionState {
       isPaused: isPaused ?? this.isPaused,
       thought: thought ?? this.thought,
       isSpeaking: isSpeaking ?? this.isSpeaking,
+      roundStartSeconds: roundStartSeconds ?? this.roundStartSeconds,
     );
   }
 }
@@ -43,7 +49,14 @@ class SessionCubit extends Cubit<SessionState> {
   bool shouldCheckInputComponents = true;
 
   SessionCubit(this.gameRef, {String currentWord = ''})
-      : super(SessionState(elapsedTime: 0, currentWord: currentWord, thought: '')) {
+      : super(
+          SessionState(
+            elapsedTime: 0,
+            currentWord: currentWord,
+            thought: '',
+            roundStartSeconds: 60,
+          ),
+        ) {
     // Initialize timedFormComponents here
     timedFormComponents = [
       TimedFormComponent(startTime: 5, cubit: this),
@@ -128,6 +141,10 @@ class SessionCubit extends Cubit<SessionState> {
 
   void setElapsedTime(double seconds) {
     emit(state.copyWith(elapsedTime: seconds));
+  }
+
+  void setRoundStartSeconds(double seconds) {
+    emit(state.copyWith(roundStartSeconds: seconds));
   }
 
   void pauseGame() {

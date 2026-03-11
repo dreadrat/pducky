@@ -93,8 +93,10 @@ class SessionSpeaking {
       ),
     ];
 
-    // 10-minute guided script (generic audio assets; user's thought is shown
-    // separately on-screen as `Thought: ...`).
+    // 10-minute guided script.
+    // If skipping intro, shift schedule so the guided script begins at t=0.
+    final guidedOffset = skipIntro ? -60 : 0;
+
     sessionCubit.timedSpeechComponents.addAll(
       round10Lines
           .map(
@@ -104,7 +106,8 @@ class SessionSpeaking {
                 sessionCubit: sessionCubit,
                 filename: line.filename,
               ),
-              startTime: line.startTimeSeconds,
+              startTime:
+                  (line.startTimeSeconds + guidedOffset).clamp(0, 36000).toInt(),
             ),
           )
           .toList(),

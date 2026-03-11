@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
@@ -27,8 +28,6 @@ class Ball extends PositionedEntity with HasGameRef {
 
     // Listen to the SessionCubit state changes
     sessionCubit.stream.listen((state) {
-      textComponent.text = state.currentWord;
-
       // Update the thought word list when the thought changes.
       final words = state.thought
           .split(RegExp(r'\s+'))
@@ -52,11 +51,10 @@ class Ball extends PositionedEntity with HasGameRef {
   final SessionCubit sessionCubit;
   late CircleComponent circle;
   late TextComponent textComponent;
-  late TextComponent thoughtComponent;
-
   final _thoughtWords = <String>[];
   int _thoughtIndex = 0;
   double _thoughtAccum = 0;
+  double _thoughtOpacity = 0.0;
 
   @override
   void onGameResize(Vector2 gameSize) {
@@ -115,57 +113,66 @@ class Ball extends PositionedEntity with HasGameRef {
       anchor: Anchor.topCenter,
     );
 
-    thoughtComponent = TextComponent(
-      text: '',
-      position: Vector2(size.x / 2, size.y + 28),
-      anchor: Anchor.topCenter,
-      textRenderer: TextPaint(
-        style: const TextStyle(
-          color: Color(0xFFB0B0B0),
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-    );
-
+    // textComponent is used for BOTH guided words and thought words.
     add(textComponent);
-    add(thoughtComponent);
   }
 
   @override
   void update(double dt) {
     super.update(dt);
 
-    // Show the thought word-by-word *between* guided lines (when not speaking).
-    final inRound = sessionCubit.state.elapsedTime >= 60;
-    final hasThought = _thoughtWords.isNotEmpty;
-    final canShowThought =
-        inRound && hasThought && sessionCubit.state.isSpeaking == false;
+    final state = sessionCubit.state;
 
-    if (!canShowThought) {
-      thoughtComponent.text = '';
-      _thoughtAccum = 0;
+    // Guided round timing baseline.
+    final roundStart = state.roundStartSeconds;
+    final inRound = state.elapsedTime >= roundStart;
+
+    // Fade target from 35% to 5% over 10 minutes of round time.
+    // (If skipping intro, roundStart is 0; otherwise 60.)
+    final roundElapsed = (state.elapsedTime - roundStart).clamp(0.0, 600.0);
+    final progress = (roundElapsed / 600.0).clamp(0.0, 1.0);
+    final fadeTarget = (0.35 + (0.05 - 0.35) * progress).clamp(0.05, 0.35);
+
+    // Between sentences: show thought one word at a time.
+    final showThought = inRound && _thoughtWords.isNotEmpty && !state.isSpeaking;
+
+    if (showThought) {
+      // Fade thought in.
+      _thoughtOpacity = (_thoughtOpacity + dt * 1.5).clamp(0.0, fadeTarget);
+
+      // Advance a thought word every ~0.9s.
+      _thoughtAccum += dt;
+      if (textComponent.text.isEmpty || _thoughtAccum >= 0.9) {
+        _thoughtAccum = 0;
+        textComponent.text = _thoughtWords[_thoughtIndex];
+        _thoughtIndex = (_thoughtIndex + 1) % _thoughtWords.length;
+      }
+
+      textComponent.textRenderer = TextPaint(
+        style: TextStyle(
+          color: const Color(0xFFB0B0B0).withValues(alpha: _thoughtOpacity),
+          fontSize: gameRef.size.y * 0.07,
+          fontWeight: FontWeight.w500,
+        ),
+      );
+
       return;
     }
 
-    // Fade from 35% to 5% opacity over the round.
-    final progress =
-        ((sessionCubit.state.elapsedTime - 60) / (600 - 60)).clamp(0.0, 1.0);
-    final opacity = (0.35 + (0.05 - 0.35) * progress).clamp(0.05, 0.35);
-    thoughtComponent.textRenderer = TextPaint(
-      style: TextStyle(
-        color: const Color(0xFFB0B0B0).withValues(alpha: opacity),
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-      ),
-    );
+    // During guided sentences (or before round starts), fade thought out and let
+    // SessionCubit / SpeechComponent drive the word.
+    _thoughtOpacity = (_thoughtOpacity - dt * 2.0).clamp(0.0, 1.0);
 
-    // Advance a thought word every ~0.9s.
-    _thoughtAccum += dt;
-    if (thoughtComponent.text.isEmpty || _thoughtAccum >= 0.9) {
-      _thoughtAccum = 0;
-      thoughtComponent.text = _thoughtWords[_thoughtIndex];
-      _thoughtIndex = (_thoughtIndex + 1) % _thoughtWords.length;
+    // Apply normal guided word style when speaking.
+    if (state.isSpeaking) {
+      textComponent.text = state.currentWord;
+      textComponent.textRenderer = TextPaint(
+        style: TextStyle(
+          color: const Color(0xFFDEDADE).withValues(alpha: 1.0),
+          fontSize: gameRef.size.y * 0.08,
+          fontWeight: FontWeight.w600,
+        ),
+      );
     }
   }
 
