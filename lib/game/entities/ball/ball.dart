@@ -163,8 +163,8 @@ class Ball extends PositionedEntity with HasGameRef {
     // SessionCubit / SpeechComponent drive the word.
     _thoughtOpacity = (_thoughtOpacity - dt * 2.0).clamp(0.0, 1.0);
 
-    // Apply normal guided word style when speaking.
     if (state.isSpeaking) {
+      // Guided word style
       textComponent.text = state.currentWord;
       textComponent.textRenderer = TextPaint(
         style: TextStyle(
@@ -173,6 +173,9 @@ class Ball extends PositionedEntity with HasGameRef {
           fontWeight: FontWeight.w600,
         ),
       );
+    } else {
+      // Neither speaking nor showing thought: clear the word.
+      textComponent.text = '';
     }
   }
 
