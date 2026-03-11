@@ -28,13 +28,21 @@ class Ball extends PositionedEntity with HasGameRef {
     // Listen to the SessionCubit state changes
     sessionCubit.stream.listen((state) {
       textComponent.text = state.currentWord;
-      // Only show the thought line during the main guided round (after the
-      // initial preamble speech). This keeps the old intro visuals unchanged.
-      if (state.thought.isNotEmpty && state.elapsedTime >= 60) {
-        thoughtComponent.text = 'Thought: ${state.thought}';
-      } else {
-        thoughtComponent.text = '';
+
+      // Update the thought word list when the thought changes.
+      final words = state.thought
+          .split(RegExp(r'\s+'))
+          .map((w) => w.trim())
+          .where((w) => w.isNotEmpty)
+          .toList();
+      if (words.join(' ') != _thoughtWords.join(' ')) {
+        _thoughtWords
+          ..clear()
+          ..addAll(words);
+        _thoughtIndex = 0;
+        _thoughtAccum = 0;
       }
+
       triggerTextEffect();
     });
   }
@@ -45,6 +53,10 @@ class Ball extends PositionedEntity with HasGameRef {
   late CircleComponent circle;
   late TextComponent textComponent;
   late TextComponent thoughtComponent;
+
+  final _thoughtWords = <String>[];
+  int _thoughtIndex = 0;
+  double _thoughtAccum = 0;
 
   @override
   void onGameResize(Vector2 gameSize) {
@@ -104,21 +116,57 @@ class Ball extends PositionedEntity with HasGameRef {
     );
 
     thoughtComponent = TextComponent(
-      text: sessionCubit.state.thought.isEmpty
-          ? ''
-          : 'Thought: ${sessionCubit.state.thought}',
+      text: '',
       position: Vector2(size.x / 2, size.y + 28),
       anchor: Anchor.topCenter,
       textRenderer: TextPaint(
         style: const TextStyle(
           color: Color(0xFFB0B0B0),
-          fontSize: 12,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );
 
     add(textComponent);
     add(thoughtComponent);
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+
+    // Show the thought word-by-word *between* guided lines (when not speaking).
+    final inRound = sessionCubit.state.elapsedTime >= 60;
+    final hasThought = _thoughtWords.isNotEmpty;
+    final canShowThought =
+        inRound && hasThought && sessionCubit.state.isSpeaking == false;
+
+    if (!canShowThought) {
+      thoughtComponent.text = '';
+      _thoughtAccum = 0;
+      return;
+    }
+
+    // Fade from 35% to 5% opacity over the round.
+    final progress =
+        ((sessionCubit.state.elapsedTime - 60) / (600 - 60)).clamp(0.0, 1.0);
+    final opacity = (0.35 + (0.05 - 0.35) * progress).clamp(0.05, 0.35);
+    thoughtComponent.textRenderer = TextPaint(
+      style: TextStyle(
+        color: const Color(0xFFB0B0B0).withValues(alpha: opacity),
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+      ),
+    );
+
+    // Advance a thought word every ~0.9s.
+    _thoughtAccum += dt;
+    if (thoughtComponent.text.isEmpty || _thoughtAccum >= 0.9) {
+      _thoughtAccum = 0;
+      thoughtComponent.text = _thoughtWords[_thoughtIndex];
+      _thoughtIndex = (_thoughtIndex + 1) % _thoughtWords.length;
+    }
   }
 
   Future<void> playAudioBasedOnDirection(MovementDirection direction) async {

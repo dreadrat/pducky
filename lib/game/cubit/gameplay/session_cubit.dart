@@ -9,6 +9,7 @@ class SessionState {
     this.currentWord = '',
     this.isPaused = false,
     this.thought = '',
+    this.isSpeaking = false,
   });
 
   final double elapsedTime;
@@ -16,17 +17,22 @@ class SessionState {
   final bool isPaused;
   final String thought;
 
+  /// True while a SpeechComponent is actively driving word-by-word guidance.
+  final bool isSpeaking;
+
   SessionState copyWith({
     String? currentWord,
     bool? isPaused,
     String? thought,
     double? elapsedTime,
+    bool? isSpeaking,
   }) {
     return SessionState(
       elapsedTime: elapsedTime ?? this.elapsedTime,
       currentWord: currentWord ?? this.currentWord,
       isPaused: isPaused ?? this.isPaused,
       thought: thought ?? this.thought,
+      isSpeaking: isSpeaking ?? this.isSpeaking,
     );
   }
 }
@@ -53,6 +59,12 @@ class SessionCubit extends Cubit<SessionState> {
 
   void updateThought(String thought) {
     emit(state.copyWith(thought: thought));
+  }
+
+  void setSpeaking(bool speaking) {
+    if (state.isSpeaking != speaking) {
+      emit(state.copyWith(isSpeaking: speaking));
+    }
   }
 
   void checkSpeechComponents() {

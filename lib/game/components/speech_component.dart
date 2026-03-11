@@ -36,16 +36,17 @@ class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
   Ticker? fadeOutTicker;
 
   void start() {
+    sessionCubit.setSpeaking(true);
+
     if (timepoints.isNotEmpty) {
       currentWord = timepoints[0]['word'] as String?;
       sessionCubit.updateCurrentWord(currentWord!);
     }
 
     // Start the audio playback after a delay of 0.2 seconds
-    Future.delayed(Duration(milliseconds: 200), () {
+    Future.delayed(const Duration(milliseconds: 200), () {
       FlameAudio.play('speech/$filename.mp3').then((_) {});
-
-      audioStartTime = DateTime.now(); // Add this line
+      audioStartTime = DateTime.now();
     });
   }
 
@@ -92,17 +93,16 @@ class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
       // Get the SessionCubit instance and update the currentWord
       sessionCubit.updateCurrentWord(currentWord!);
 
-      // If this is the final word, start a timer to start the fadeOutTicker after 1 second
+      // If this is the final word, fade it out and then mark speech as done.
       if (currentIndex == timepoints.length - 1) {
-        Future.delayed(Duration(seconds: 1), () {
+        Future.delayed(const Duration(seconds: 1), () {
           if (fadeOutTicker == null) {
             fadeOutTicker = Ticker((Duration duration) {
-              opacity = 1.0 -
-                  duration.inMilliseconds / 100.0; // Adjust the speed as needed
+              opacity = 1.0 - duration.inMilliseconds / 250.0;
               if (opacity <= 0) {
                 fadeOutTicker!.stop();
+                sessionCubit.setSpeaking(false);
               }
-              // Trigger a visual update
             });
             fadeOutTicker!.start();
           }
