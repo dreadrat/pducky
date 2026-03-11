@@ -81,12 +81,18 @@ class SessionCubit extends Cubit<SessionState> {
   }
 
   void checkSpeechComponents() {
+    // Ensure speech lines don't overlap; overlapping speech keeps us in a
+    // permanently-speaking state which prevents thought-words from appearing.
+    if (state.isSpeaking) return;
+
     final timedSpeechComponentsCopy =
         List<TimedSpeechComponent>.from(timedSpeechComponents);
     for (final timedSpeechComponent in timedSpeechComponentsCopy) {
       if (state.elapsedTime >= timedSpeechComponent.startTime) {
         timedSpeechComponent.speechComponent.start();
         timedSpeechComponents.remove(timedSpeechComponent);
+        // Start at most one speech component per tick.
+        break;
       }
     }
   }
