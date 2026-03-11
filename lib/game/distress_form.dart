@@ -22,6 +22,8 @@ class _DistressFormState extends State<DistressForm> {
   double _distressLevel = 1;
   final _pageController = PageController();
 
+  bool _skipIntro = false;
+
   @override
   void dispose() {
     _negativeThoughtController.dispose();
@@ -69,17 +71,30 @@ class _DistressFormState extends State<DistressForm> {
                       ),
                       Text(
                           'Please enter the negative thought you are currently having.'), // Add a description
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Checkbox(
+                            value: _skipIntro,
+                            onChanged: (v) {
+                              setState(() {
+                                _skipIntro = v ?? false;
+                              });
+                            },
+                          ),
+                          const Text('Skip intro'),
+                        ],
+                      ),
                       ElevatedButton(
                         onPressed: () {
                           if (_formKey.currentState?.validate() ?? false) {
-                            // If the form is valid, go to the next page
                             _pageController.nextPage(
-                              duration: Duration(milliseconds: 300),
+                              duration: const Duration(milliseconds: 300),
                               curve: Curves.easeIn,
                             );
                           }
                         },
-                        child: Text('Next'),
+                        child: const Text('Next'),
                       ),
                     ],
                   ),
@@ -125,6 +140,7 @@ class _DistressFormState extends State<DistressForm> {
 
                     widget.gameRef.startRoundWithThought(
                       _negativeThoughtController.text,
+                      skipIntro: _skipIntro,
                     );
                     widget.gameRef.resumeEngine();
                     widget.onDismiss();

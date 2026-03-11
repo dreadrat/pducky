@@ -126,6 +126,10 @@ class SessionCubit extends Cubit<SessionState> {
     emit(state.copyWith(elapsedTime: 0));
   }
 
+  void setElapsedTime(double seconds) {
+    emit(state.copyWith(elapsedTime: seconds));
+  }
+
   void pauseGame() {
     emit(state.copyWith(isPaused: true));
   }

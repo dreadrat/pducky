@@ -45,10 +45,21 @@ class Pducky extends FlameGame
   late final SessionCubit sessionCubit;
   late final SessionSpeaking sessionSpeaking;
 
-  void startRoundWithThought(String thought) {
+  void startRoundWithThought(String thought, {bool skipIntro = false}) {
     sessionCubit.resetTime();
     sessionCubit.updateThought(thought);
-    sessionSpeaking.loadSpeechComponents(sessionCubit, this);
+
+    sessionSpeaking.loadSpeechComponents(
+      sessionCubit,
+      this,
+      skipIntro: skipIntro,
+    );
+
+    // If skipping intro, jump the timer to the guided round start.
+    if (skipIntro) {
+      // Guided round starts at 60s (see schedule + UI behaviour).
+      sessionCubit.setElapsedTime(60);
+    }
   }
 
   void showPauseMenu() {
