@@ -23,6 +23,7 @@ class ScoringCubit extends Cubit<ScoringState> {
     direction: MovementDirection.Left,
     speed: 3000,
     hasTapped: false,
+    pendingScoreSoundDirection: null,
   );
 
   final StreamController<void> _scoreIncreasedController =
@@ -47,15 +48,10 @@ class ScoringCubit extends Cubit<ScoringState> {
         missStreak: 0,
         hasTapped: true,
         direction: direction,
+        // Delay the success sound to the next turnaround blip for better sync.
+        pendingScoreSoundDirection: direction,
       ),
     ); // Reset the missed taps count when a score is recorded
-
-    switch (direction) {
-      case MovementDirection.Left:
-        FlameAudio.play('left_score.mp3');
-      case MovementDirection.Right:
-        FlameAudio.play('right_score.mp3');
-    }
 
     // Notify listeners that the score has increased
     _scoreIncreasedController.add(null);
@@ -129,6 +125,14 @@ class ScoringCubit extends Cubit<ScoringState> {
     emit(state.copyWith(streak: 0));
   }
 
+  MovementDirection? consumePendingScoreSoundDirection() {
+    final pending = state.pendingScoreSoundDirection;
+    if (pending != null) {
+      emit(state.copyWith(pendingScoreSoundDirection: null));
+    }
+    return pending;
+  }
+
   @override
   Future<void> close() {
     _scoreIncreasedController.close();
@@ -149,6 +153,8 @@ class ScoringCubit extends Cubit<ScoringState> {
 }
 
 class ScoringState {
+  static const _unset = Object();
+
   const ScoringState({
     required this.ballImage,
     required this.ballIsInScoringZone,
@@ -158,6 +164,7 @@ class ScoringState {
     required this.direction,
     required this.speed,
     required this.hasTapped,
+    required this.pendingScoreSoundDirection,
   });
   final BallImage ballImage;
   final bool ballIsInScoringZone;
@@ -168,6 +175,9 @@ class ScoringState {
   final double speed;
   final bool hasTapped;
 
+  /// When set, play the corresponding success sound at the next turnaround.
+  final MovementDirection? pendingScoreSoundDirection;
+
   ScoringState copyWith({
     BallImage? ballImage,
     bool? ballIsInScoringZone,
@@ -177,17 +187,20 @@ class ScoringState {
     MovementDirection? direction,
     double? speed,
     bool? hasTapped,
+    Object? pendingScoreSoundDirection = _unset,
   }) {
     return ScoringState(
       ballImage: ballImage ?? this.ballImage,
       ballIsInScoringZone: ballIsInScoringZone ?? this.ballIsInScoringZone,
       score: score ?? this.score,
       streak: streak ?? this.streak,
-
       direction: direction ?? this.direction,
       speed: speed ?? this.speed,
       missStreak: missStreak ?? this.missStreak,
-      hasTapped: hasTapped ?? this.hasTapped, // And this
+      hasTapped: hasTapped ?? this.hasTapped,
+      pendingScoreSoundDirection: pendingScoreSoundDirection == _unset
+          ? this.pendingScoreSoundDirection
+          : pendingScoreSoundDirection as MovementDirection?,
     );
   }
 }

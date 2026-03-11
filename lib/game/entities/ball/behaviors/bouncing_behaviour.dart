@@ -45,11 +45,27 @@ class BouncingBehaviour extends Behavior with HasGameRef<Pducky> {
 
     onDirectionChange(direction);
 
-    // Play the sound based on the direction
-    if (direction == MovementDirection.Right) {
-      FlameAudio.play('blip_left.mp3');
+    // Play the sound at turnaround.
+    //
+    // If a score was recorded during the previous scoring window, we delay the
+    // success sound until the turnaround to keep it in sync with the blip.
+    final pendingScoreSoundDirection =
+        scoringCubit.consumePendingScoreSoundDirection();
+
+    if (pendingScoreSoundDirection != null) {
+      switch (pendingScoreSoundDirection) {
+        case MovementDirection.Left:
+          FlameAudio.play('left_score.mp3');
+        case MovementDirection.Right:
+          FlameAudio.play('right_score.mp3');
+      }
     } else {
-      FlameAudio.play('blip_right.mp3');
+      // Otherwise play the normal turnaround blip.
+      if (direction == MovementDirection.Right) {
+        FlameAudio.play('blip_left.mp3');
+      } else {
+        FlameAudio.play('blip_right.mp3');
+      }
     }
 
     controller = EffectController(
