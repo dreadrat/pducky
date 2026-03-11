@@ -42,6 +42,18 @@ class Pducky extends FlameGame
   late Ball puppyDuck;
   late GameplayButtons gameplayButtons;
 
+  void showPauseMenu() {
+    overlays.add('PauseMenu');
+  }
+
+  void hidePauseMenu() {
+    overlays.remove('PauseMenu');
+  }
+
+  void showDistressForm() {
+    overlays.add('DistressForm');
+  }
+
   int counter = 0;
 
   @override

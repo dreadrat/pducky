@@ -45,12 +45,13 @@ class PauseButtonBehavior extends Behavior
 
   @override
   void onTapDown(TapDownEvent event) {
-    print('Pause Tapped');
-
-    if (gameRef.paused) {
+    // Toggle pause menu overlay.
+    if (gameRef.overlays.isActive('PauseMenu')) {
+      gameRef.hidePauseMenu();
       gameRef.resumeEngine();
     } else {
       gameRef.pauseEngine();
+      gameRef.showPauseMenu();
     }
   }
 }

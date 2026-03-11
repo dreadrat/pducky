@@ -10,6 +10,7 @@ import 'package:pducky/game/game.dart';
 import 'package:pducky/l10n/l10n.dart';
 import 'package:pducky/loading/cubit/cubit.dart';
 import 'package:pducky/game/distress_form.dart';
+import 'package:pducky/game/pause_menu.dart';
 
 class GamePage extends StatelessWidget {
   const GamePage({super.key});
@@ -101,6 +102,16 @@ class _GameViewState extends State<GameView> {
                 overlayBuilderMap: {
                   'DistressForm': (BuildContext context, FlameGame game) {
                     return DistressForm(
+                      gameRef: game as Pducky,
+                      onDismiss: () {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          _gameFocusNode.requestFocus();
+                        });
+                      },
+                    );
+                  },
+                  'PauseMenu': (BuildContext context, FlameGame game) {
+                    return PauseMenu(
                       gameRef: game as Pducky,
                       onDismiss: () {
                         WidgetsBinding.instance.addPostFrameCallback((_) {
