@@ -1,0 +1,77 @@
+[
+  {
+    "markName": "mark0",
+    "timeSeconds": 0.014999999664723873,
+    "word": "Do"
+  },
+  {
+    "markName": "mark1",
+    "timeSeconds": 0.2449999898672104,
+    "word": "a"
+  },
+  {
+    "markName": "mark2",
+    "timeSeconds": 0.3149999976158142,
+    "word": "gentle"
+  },
+  {
+    "markName": "mark3",
+    "timeSeconds": 0.7877916693687439,
+    "word": "body"
+  },
+  {
+    "markName": "mark4",
+    "timeSeconds": 1.1177916526794434,
+    "word": "check."
+  },
+  {
+    "markName": "mark5",
+    "timeSeconds": 1.9833332300186157,
+    "word": "Where"
+  },
+  {
+    "markName": "mark6",
+    "timeSeconds": 2.178333282470703,
+    "word": "do"
+  },
+  {
+    "markName": "mark7",
+    "timeSeconds": 2.2933332920074463,
+    "word": "you"
+  },
+  {
+    "markName": "mark8",
+    "timeSeconds": 2.4299583435058594,
+    "word": "feel"
+  },
+  {
+    "markName": "mark9",
+    "timeSeconds": 2.819624900817871,
+    "word": "it?"
+  },
+  {
+    "markName": "mark10",
+    "timeSeconds": 3.4276249408721924,
+    "word": "Chest,"
+  },
+  {
+    "markName": "mark11",
+    "timeSeconds": 4.091291427612305,
+    "word": "throat,"
+  },
+  {
+    "markName": "mark12",
+    "timeSeconds": 4.746583461761475,
+    "word": "stomach,"
+  },
+  {
+    "markName": "mark13",
+    "timeSeconds": 5.451541900634766,
+    "word": "jaw,"
+  },
+  {
+    "markName": "mark14",
+    "timeSeconds": 6.086916923522949,
+    "word": "shoulders."
+  }
+]

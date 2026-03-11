@@ -86,76 +86,112 @@ class SessionSpeaking {
       ),
       // Add more TimedSpeechComponents as needed
     ];
-    // 10-minute round prototype (web-safe): text cues during play.
-    //
-    // Option A: audio lines are generic assets; the user's thought is displayed
-    // separately on screen (see Ball thought label).
-    sessionCubit.timedCueComponents = [
-      TimedCueComponent(
-        cueComponent: CueComponent(
+
+    // 10-minute guided script (generic audio assets; user's thought is shown
+    // separately on-screen as `Thought: ...`).
+    sessionCubit.timedSpeechComponents.addAll([
+      TimedSpeechComponent(
+        speechComponent: SpeechComponent(
+          ball: game.puppyDuck,
           sessionCubit: sessionCubit,
-          text: 'No judgement — just noticing.',
-          displaySeconds: 2.5,
+          filename:
+              'Welcome._You’ve_already_named_the_thought_and_rated_how_strong_it_feels._Nice_work.',
         ),
         startTime: 60,
       ),
-      TimedCueComponent(
-        cueComponent: CueComponent(
+      TimedSpeechComponent(
+        speechComponent: SpeechComponent(
+          ball: game.puppyDuck,
           sessionCubit: sessionCubit,
-          text: 'Keep the thought lightly in mind.',
-          displaySeconds: 2.5,
+          filename:
+              'For_this_round,_we’re_not_trying_to_argue_with_the_thought_or_push_it_away._We’re_practising_noticing_it.',
         ),
-        startTime: 90,
+        startTime: 105,
       ),
-      TimedCueComponent(
-        cueComponent: CueComponent(
+      TimedSpeechComponent(
+        speechComponent: SpeechComponent(
+          ball: game.puppyDuck,
           sessionCubit: sessionCubit,
-          text: 'Where do you feel it in your body?',
-          displaySeconds: 2.5,
-        ),
-        startTime: 120,
-      ),
-      TimedCueComponent(
-        cueComponent: CueComponent(
-          sessionCubit: sessionCubit,
-          text: 'Name the feeling (one word).',
-          displaySeconds: 2.5,
+          filename:
+              'As_you_play,_let_the_thought_sit_quietly_in_the_background._If_it_feels_loud,_that’s_okay.',
         ),
         startTime: 150,
       ),
-      TimedCueComponent(
-        cueComponent: CueComponent(
+      TimedSpeechComponent(
+        speechComponent: SpeechComponent(
+          ball: game.puppyDuck,
           sessionCubit: sessionCubit,
-          text: "Try: ‘I’m having the thought that…’",
-          displaySeconds: 2.5,
+          filename:
+              'Do_a_gentle_body_check._Where_do_you_feel_it__Chest,_throat,_stomach,_jaw,_shoulders.',
         ),
-        startTime: 180,
+        startTime: 210,
       ),
-      TimedCueComponent(
-        cueComponent: CueComponent(
+      TimedSpeechComponent(
+        speechComponent: SpeechComponent(
+          ball: game.puppyDuck,
           sessionCubit: sessionCubit,
-          text: 'Thought… body… ball.',
-          displaySeconds: 2.0,
+          filename:
+              'If_you_can,_name_the_feeling_that_comes_with_it._Just_one_word_is_enough.',
         ),
-        startTime: 240,
+        startTime: 270,
       ),
-      TimedCueComponent(
-        cueComponent: CueComponent(
+      TimedSpeechComponent(
+        speechComponent: SpeechComponent(
+          ball: game.puppyDuck,
           sessionCubit: sessionCubit,
-          text: 'What would you tell a friend?',
-          displaySeconds: 2.5,
+          filename:
+              'Try_adding_a_little_space__I’m_having_the_thought_that…_and_then_add_your_thought_on_the_end.',
         ),
         startTime: 330,
       ),
-      TimedCueComponent(
-        cueComponent: CueComponent(
+      TimedSpeechComponent(
+        speechComponent: SpeechComponent(
+          ball: game.puppyDuck,
           sessionCubit: sessionCubit,
-          text: 'Notice what changed. Slow breath.',
-          displaySeconds: 2.5,
+          filename:
+              'Now_let_it_be_there,_and_bring_your_attention_back_to_the_ball._Thought,_body,_ball.',
         ),
-        startTime: 560,
+        startTime: 390,
       ),
-    ];
+      TimedSpeechComponent(
+        speechComponent: SpeechComponent(
+          ball: game.puppyDuck,
+          sessionCubit: sessionCubit,
+          filename:
+              'Imagine_a_friend_had_this_exact_thought._What_would_you_say_to_them__Keep_it_simple_and_kind.',
+        ),
+        startTime: 480,
+      ),
+      TimedSpeechComponent(
+        speechComponent: SpeechComponent(
+          ball: game.puppyDuck,
+          sessionCubit: sessionCubit,
+          filename:
+              'Zoom_out_slightly._Is_the_thought_pulling_you_to_the_past,_the_present,_or_the_future_',
+        ),
+        startTime: 555,
+      ),
+      TimedSpeechComponent(
+        speechComponent: SpeechComponent(
+          ball: game.puppyDuck,
+          sessionCubit: sessionCubit,
+          filename:
+              'If_you_want,_hold_one_small_balanced_sentence_alongside_it._Like__This_is_a_thought,_not_a_fact.',
+        ),
+        startTime: 630,
+      ),
+      TimedSpeechComponent(
+        speechComponent: SpeechComponent(
+          ball: game.puppyDuck,
+          sessionCubit: sessionCubit,
+          filename:
+              'Last_check-in._Notice_what’s_changed,_even_a_little._Take_a_slow_breath.',
+        ),
+        startTime: 720,
+      ),
+    ]);
+
+    sessionCubit.timedCueComponents = [];
 
     // Add the SpeechComponent instances to the game
     for (final timedSpeechComponent in sessionCubit.timedSpeechComponents) {
