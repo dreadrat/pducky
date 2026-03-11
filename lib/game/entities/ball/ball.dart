@@ -28,6 +28,7 @@ class Ball extends PositionedEntity with HasGameRef {
     // Listen to the SessionCubit state changes
     sessionCubit.stream.listen((state) {
       textComponent.text = state.currentWord;
+      thoughtComponent.text = state.thought.isEmpty ? '' : 'Thought: ${state.thought}';
       triggerTextEffect();
     });
   }
@@ -37,6 +38,7 @@ class Ball extends PositionedEntity with HasGameRef {
   final SessionCubit sessionCubit;
   late CircleComponent circle;
   late TextComponent textComponent;
+  late TextComponent thoughtComponent;
 
   @override
   void onGameResize(Vector2 gameSize) {
@@ -90,12 +92,27 @@ class Ball extends PositionedEntity with HasGameRef {
     );
 
     textComponent = TextComponent(
-      text: sessionCubit.state.currentWord, // Use currentWord from SessionCubit
+      text: sessionCubit.state.currentWord,
       position: Vector2(size.x / 2, size.y + 10),
       anchor: Anchor.topCenter,
     );
 
+    thoughtComponent = TextComponent(
+      text: sessionCubit.state.thought.isEmpty
+          ? ''
+          : 'Thought: ${sessionCubit.state.thought}',
+      position: Vector2(size.x / 2, size.y + 28),
+      anchor: Anchor.topCenter,
+      textRenderer: TextPaint(
+        style: const TextStyle(
+          color: Color(0xFFB0B0B0),
+          fontSize: 12,
+        ),
+      ),
+    );
+
     add(textComponent);
+    add(thoughtComponent);
   }
 
   Future<void> playAudioBasedOnDirection(MovementDirection direction) async {
