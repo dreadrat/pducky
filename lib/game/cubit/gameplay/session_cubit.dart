@@ -36,18 +36,30 @@ class SessionCubit extends Cubit<SessionState> {
   }
 
   List<TimedSpeechComponent> timedSpeechComponents = [];
+  List<TimedCueComponent> timedCueComponents = [];
 
   void updateCurrentWord(String word) {
     emit(state.copyWith(currentWord: word));
   }
 
   void checkSpeechComponents() {
-    var timedSpeechComponentsCopy =
+    final timedSpeechComponentsCopy =
         List<TimedSpeechComponent>.from(timedSpeechComponents);
-    for (var timedSpeechComponent in timedSpeechComponentsCopy) {
+    for (final timedSpeechComponent in timedSpeechComponentsCopy) {
       if (state.elapsedTime >= timedSpeechComponent.startTime) {
         timedSpeechComponent.speechComponent.start();
         timedSpeechComponents.remove(timedSpeechComponent);
+      }
+    }
+  }
+
+  void checkCueComponents() {
+    final timedCueComponentsCopy =
+        List<TimedCueComponent>.from(timedCueComponents);
+    for (final timedCueComponent in timedCueComponentsCopy) {
+      if (state.elapsedTime >= timedCueComponent.startTime) {
+        timedCueComponent.cueComponent.start();
+        timedCueComponents.remove(timedCueComponent);
       }
     }
   }
@@ -79,6 +91,7 @@ class SessionCubit extends Cubit<SessionState> {
       final newTime = state.elapsedTime + dt;
       emit(SessionState(elapsedTime: newTime));
       checkSpeechComponents();
+      checkCueComponents();
       checkInputComponents();
     }
   }

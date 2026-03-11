@@ -3,12 +3,26 @@ import 'package:pducky/game/cubit/cubit.dart';
 import 'package:pducky/game/pducky.dart';
 import 'package:pducky/game/entities/entities.dart';
 
+abstract class Startable {
+  void start();
+}
+
 class TimedSpeechComponent {
   final SpeechComponent speechComponent;
   final int startTime;
 
   TimedSpeechComponent({
     required this.speechComponent,
+    required this.startTime,
+  });
+}
+
+class TimedCueComponent {
+  final CueComponent cueComponent;
+  final int startTime;
+
+  TimedCueComponent({
+    required this.cueComponent,
     required this.startTime,
   });
 }
@@ -71,9 +85,110 @@ class SessionSpeaking {
       ),
       // Add more TimedSpeechComponents as needed
     ];
+    // 10-minute round prototype: text-only cues during play.
+    // These are deliberately short so they fit under the ball.
+    sessionCubit.timedCueComponents = [
+      // Non-judgement + grounding
+      TimedCueComponent(
+        cueComponent: CueComponent(
+          sessionCubit: sessionCubit,
+          text: 'No judgment',
+        ),
+        startTime: 60,
+      ),
+      TimedCueComponent(
+        cueComponent: CueComponent(
+          sessionCubit: sessionCubit,
+          text: 'Thought ≠ fact',
+        ),
+        startTime: 90,
+      ),
+      TimedCueComponent(
+        cueComponent: CueComponent(
+          sessionCubit: sessionCubit,
+          text: 'Where in body?',
+        ),
+        startTime: 120,
+      ),
+      TimedCueComponent(
+        cueComponent: CueComponent(
+          sessionCubit: sessionCubit,
+          text: 'Name the feeling',
+        ),
+        startTime: 150,
+      ),
+      TimedCueComponent(
+        cueComponent: CueComponent(
+          sessionCubit: sessionCubit,
+          text: "I'm having the thought…",
+          displaySeconds: 2.5,
+        ),
+        startTime: 180,
+      ),
+      TimedCueComponent(
+        cueComponent: CueComponent(
+          sessionCubit: sessionCubit,
+          text: 'Let it be here',
+        ),
+        startTime: 210,
+      ),
+      // Mid-round perspective + compassion
+      TimedCueComponent(
+        cueComponent: CueComponent(
+          sessionCubit: sessionCubit,
+          text: 'What would you tell a friend?',
+          displaySeconds: 3,
+        ),
+        startTime: 270,
+      ),
+      TimedCueComponent(
+        cueComponent: CueComponent(
+          sessionCubit: sessionCubit,
+          text: 'Back to the ball',
+        ),
+        startTime: 300,
+      ),
+      TimedCueComponent(
+        cueComponent: CueComponent(
+          sessionCubit: sessionCubit,
+          text: 'One small next step',
+          displaySeconds: 2.5,
+        ),
+        startTime: 360,
+      ),
+      TimedCueComponent(
+        cueComponent: CueComponent(
+          sessionCubit: sessionCubit,
+          text: 'Be kind to yourself',
+        ),
+        startTime: 420,
+      ),
+      // End-of-round wrap
+      TimedCueComponent(
+        cueComponent: CueComponent(
+          sessionCubit: sessionCubit,
+          text: 'Notice what changed',
+          displaySeconds: 2.5,
+        ),
+        startTime: 540,
+      ),
+      TimedCueComponent(
+        cueComponent: CueComponent(
+          sessionCubit: sessionCubit,
+          text: 'Take a breath',
+        ),
+        startTime: 585,
+      ),
+    ];
+
     // Add the SpeechComponent instances to the game
-    for (var timedSpeechComponent in sessionCubit.timedSpeechComponents) {
+    for (final timedSpeechComponent in sessionCubit.timedSpeechComponents) {
       sessionCubit.gameRef.add(timedSpeechComponent.speechComponent);
+    }
+
+    // Add cue components to the game
+    for (final timedCueComponent in sessionCubit.timedCueComponents) {
+      sessionCubit.gameRef.add(timedCueComponent.cueComponent);
     }
   }
 }
