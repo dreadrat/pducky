@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
-import 'package:flame_audio/flame_audio.dart';
+// Speech playback is handled via a shared AudioPlayer to prevent overlaps.
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:pducky/game/cubit/cubit.dart';
 import 'package:flutter/services.dart';
@@ -8,9 +9,6 @@ import 'package:pducky/game/pducky.dart';
 import 'dart:async';
 import 'package:flutter/animation.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../entities/ball/ball.dart';
 
 final textStyle = TextStyle(
   color: const Color.fromARGB(255, 222, 218, 218),
@@ -18,6 +16,9 @@ final textStyle = TextStyle(
 );
 
 class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
+  static final AudioPlayer _player = AudioPlayer();
+  static StreamSubscription<void>? _completeSub;
+
   SpeechComponent(
       {required this.sessionCubit,
       required this.filename,
@@ -37,19 +38,26 @@ class SpeechComponent extends PositionComponent with HasGameRef<Pducky> {
   bool _endScheduled = false;
   bool _ended = false;
 
-  void start() {
+  Future<void> start() async {
     sessionCubit.setSpeaking(true);
+    _endScheduled = false;
+    _ended = false;
 
     if (timepoints.isNotEmpty) {
       currentWord = timepoints[0]['word'] as String?;
       sessionCubit.updateCurrentWord(currentWord!);
     }
 
-    // Start the audio playback after a delay of 0.2 seconds
-    Future.delayed(const Duration(milliseconds: 200), () {
-      FlameAudio.play('speech/$filename.mp3').then((_) {});
-      audioStartTime = DateTime.now();
+    // Stop any previous speech to avoid overlaps, then play this one.
+    await _player.stop();
+    await _completeSub?.cancel();
+    _completeSub = _player.onPlayerComplete.listen((_) {
+      sessionCubit.setSpeaking(false);
+      sessionCubit.updateCurrentWord('');
     });
+
+    audioStartTime = DateTime.now();
+    await _player.play(AssetSource('assets/audio/speech/$filename.mp3'));
   }
 
   Future<void> loadTimepoints() async {
