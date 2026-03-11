@@ -1,0 +1,32 @@
+[
+  {
+    "markName": "mark0",
+    "timeSeconds": 0.014999999664723873,
+    "word": "You"
+  },
+  {
+    "markName": "mark1",
+    "timeSeconds": 0.13999998569488525,
+    "word": "don’t"
+  },
+  {
+    "markName": "mark2",
+    "timeSeconds": 0.46058329939842224,
+    "word": "have"
+  },
+  {
+    "markName": "mark3",
+    "timeSeconds": 0.6855833530426025,
+    "word": "to"
+  },
+  {
+    "markName": "mark4",
+    "timeSeconds": 0.7954167127609253,
+    "word": "fix"
+  },
+  {
+    "markName": "mark5",
+    "timeSeconds": 1.1404167413711548,
+    "word": "it."
+  }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "markName": "mark0",
+    "timeSeconds": 0.014999999664723873,
+    "word": "This"
+  },
+  {
+    "markName": "mark1",
+    "timeSeconds": 0.26999998092651367,
+    "word": "is"
+  },
+  {
+    "markName": "mark2",
+    "timeSeconds": 0.40287497639656067,
+    "word": "a"
+  },
+  {
+    "markName": "mark3",
+    "timeSeconds": 0.48287495970726013,
+    "word": "thought,"
+  },
+  {
+    "markName": "mark4",
+    "timeSeconds": 1.1062915325164795,
+    "word": "not"
+  },
+  {
+    "markName": "mark5",
+    "timeSeconds": 1.322458267211914,
+    "word": "a"
+  },
+  {
+    "markName": "mark6",
+    "timeSeconds": 1.382458209991455,
+    "word": "fact."
+  }
+]

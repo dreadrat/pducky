@@ -1,14 +1,56 @@
-# 10-minute guided script segments (generic; thought shown on-screen)
-# One segment per line. These will be generated to assets/audio/speech.
+# 10-minute guided script (warm, soothing, short, deliberate)
+# One line per generated audio asset.
+# The user's thought is shown on-screen separately as `Thought: ...`.
 
-Welcome. You’ve already named the thought and rated how strong it feels. Nice work.
-For this round, we’re not trying to argue with the thought or push it away. We’re practising noticing it.
-As you play, let the thought sit quietly in the background. If it feels loud, that’s okay.
-Do a gentle body check. Where do you feel it? Chest, throat, stomach, jaw, shoulders.
-If you can, name the feeling that comes with it. Just one word is enough.
-Try adding a little space: I’m having the thought that… and then add your thought on the end.
-Now let it be there, and bring your attention back to the ball. Thought, body, ball.
-Imagine a friend had this exact thought. What would you say to them? Keep it simple and kind.
-Zoom out slightly. Is the thought pulling you to the past, the present, or the future?
-If you want, hold one small balanced sentence alongside it. Like: This is a thought, not a fact.
-Last check-in. Notice what’s changed, even a little. Take a slow breath.
+You’re doing well.
+Just notice the thought.
+No judgement.
+Stay with the ball.
+Thought.
+Ball.
+Thought.
+Body.
+Ball.
+Take a slow breath.
+Notice your forehead.
+Notice your jaw.
+Notice your throat.
+Notice your chest.
+Notice your shoulders.
+Notice your arms.
+Notice your hands.
+Notice your belly.
+Notice your legs.
+Notice your feet.
+Let the thought be here.
+You don’t have to fix it.
+Name the feeling.
+Just one word.
+You can feel it.
+And still play.
+Add some space.
+I’m having the thought that…
+Say it gently.
+Then come back.
+Thought.
+Body.
+Ball.
+If you drift, that’s normal.
+Just return.
+Imagine a friend.
+What would you say?
+Keep it kind.
+Zoom out.
+Past.
+Present.
+Future.
+Now.
+Pick one steady sentence.
+This is a thought, not a fact.
+Hold it softly.
+Keep playing.
+Notice any change.
+Even one percent.
+Slow breath.
+You’re safe right now.
+Back to the ball.
