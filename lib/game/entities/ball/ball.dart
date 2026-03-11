@@ -28,7 +28,13 @@ class Ball extends PositionedEntity with HasGameRef {
     // Listen to the SessionCubit state changes
     sessionCubit.stream.listen((state) {
       textComponent.text = state.currentWord;
-      thoughtComponent.text = state.thought.isEmpty ? '' : 'Thought: ${state.thought}';
+      // Only show the thought line during the main guided round (after the
+      // initial preamble speech). This keeps the old intro visuals unchanged.
+      if (state.thought.isNotEmpty && state.elapsedTime >= 60) {
+        thoughtComponent.text = 'Thought: ${state.thought}';
+      } else {
+        thoughtComponent.text = '';
+      }
       triggerTextEffect();
     });
   }

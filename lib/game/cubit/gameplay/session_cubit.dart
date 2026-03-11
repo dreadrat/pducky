@@ -103,7 +103,7 @@ class SessionCubit extends Cubit<SessionState> {
   void incrementTime(double dt) {
     if (!state.isPaused) {
       final newTime = state.elapsedTime + dt;
-      emit(SessionState(elapsedTime: newTime));
+      emit(state.copyWith(elapsedTime: newTime));
       checkSpeechComponents();
       checkCueComponents();
       checkInputComponents();
